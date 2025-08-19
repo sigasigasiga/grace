@@ -10,6 +10,7 @@ target_sources(
 
     get_lowest_base.cppm
     ostream_joiner.cppm
+    remove_const.cppm
     rerase.cppm
 
     module.cppm
