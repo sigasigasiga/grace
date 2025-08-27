@@ -7,6 +7,8 @@ export module grace.memory:make_static_shared_ptr;
 
 export namespace grace::memory {
 
+// TODO: doesn't work on GCC. maybe it is not even complaint
+#if 0
 // Each unique call to this function produces a shared pointer to a static object,
 // thanks to the lambda-parametrized non-type template parameter.
 //
@@ -29,5 +31,6 @@ requires std::constructible_from<T, Args &&...>
     // Don't try to construct `weak_ptr` from this pointer though
     return std::shared_ptr<T>(std::shared_ptr<void>(), &ret);
 }
+#endif
 
 } // namespace grace::memory
