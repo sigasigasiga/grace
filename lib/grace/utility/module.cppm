@@ -10,6 +10,7 @@ export import :ignore;
 export import :implicit_cast;
 export import :move_only;
 export import :objectify;
+export import :pick_overload;
 export import :private_base_cast;
 export import :read_only_value;
 export import :scoped;
