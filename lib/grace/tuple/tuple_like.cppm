@@ -40,7 +40,7 @@ concept tuple_like =
             return (... && adl_gettable<Is, T>);
         }
     }(
-        index_sequence_for_tuple<T>()
+        (index_sequence_for_tuple<T>)()
     );
 
 template<typename T>
