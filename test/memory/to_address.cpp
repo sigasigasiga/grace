@@ -1,7 +1,7 @@
-import grace.memory;
-
 #include <memory>
 #include <utility>
+
+import grace.memory;
 
 using namespace grace::memory;
 

@@ -1,9 +1,9 @@
-import grace.fn.bind;
-import grace.utility;
-
 #include <concepts>
 #include <functional>
 #include <utility>
+
+import grace.fn.bind;
+import grace.utility;
 
 namespace {
 
