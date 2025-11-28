@@ -16,6 +16,6 @@ int main() {
     test();
 
     if (g_invoke_counter != 1) {
-        throw std::runtime_error("prepend_deleter did not invoke deleter correctly");
+        throw 1;
     }
 }
