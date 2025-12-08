@@ -206,10 +206,7 @@ int main()
     static_assert(tuple_like<std::tuple<int &>>);
     static_assert(tuple_like<std::tuple<int &&>>);
     static_assert(tuple_like<std::tuple<int &> &>);
-    // FIXME: it has previously passed on header-only grace o__0
-#if 0
     static_assert(tuple_like<std::tuple<int &&> &>);
-#endif
 
     // `get` is a member function
     static_assert(tuple_like<member_get>);
