@@ -31,9 +31,11 @@ public:
         return *this;
     }
 
-    friend constexpr flag_set operator&(flag_set lhs, flag_set rhs) noexcept { return lhs &= rhs; }
-    friend constexpr flag_set operator|(flag_set lhs, flag_set rhs) noexcept { return lhs |= rhs; }
-    friend constexpr flag_set operator~(flag_set set) noexcept { return ~set.m_value; }
+    [[nodiscard]] friend constexpr flag_set operator&(flag_set lhs, flag_set rhs) noexcept { return lhs &= rhs; }
+    [[nodiscard]] friend constexpr flag_set operator|(flag_set lhs, flag_set rhs) noexcept { return lhs |= rhs; }
+    [[nodiscard]] friend constexpr flag_set operator~(flag_set set) noexcept { return ~set.m_value; }
+
+    [[nodiscard]] friend constexpr bool operator==(flag_set lhs, flag_set rhs) = default;
 
 public:
     [[nodiscard]] constexpr value_type value() const noexcept { return m_value; }
