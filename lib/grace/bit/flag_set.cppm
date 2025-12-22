@@ -50,3 +50,16 @@ private:
 };
 
 } // namespace grace::util
+
+using grace::util::flag_set;
+
+export template<typename T>
+struct std::hash<flag_set<T>>
+{
+    [[nodiscard]] constexpr static auto operator()(flag_set<T> set)
+        noexcept(noexcept(std::hash<typename flag_set<T>::value_type>{}(set.value())))
+        -> decltype(std::hash<typename flag_set<T>::value_type>{}(set.value()))
+    {
+        return std::hash<typename flag_set<T>::value_type>{}(set.value());
+    }
+};

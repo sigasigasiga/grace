@@ -52,3 +52,16 @@ template<typename T>
 read_only_value(T) -> read_only_value<T>;
 
 } // namespace grace::utility
+
+using grace::utility::read_only_value;
+
+export template<typename T>
+struct std::hash<read_only_value<T>>
+{
+    [[nodiscard]] constexpr static auto operator()(const read_only_value<T>& v)
+        noexcept(noexcept(std::hash<T>{}(v.get())))
+        -> decltype(std::hash<T>{}(v.get()))
+    {
+        return std::hash<T>{}(v.get());
+    }
+};
