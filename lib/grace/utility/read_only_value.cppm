@@ -29,6 +29,9 @@ public:
     static_assert(!std::is_const_v<T>);
 
 public:
+    using value_type = T;
+
+public:
     using storage_base<T>::storage_base;
 
     constexpr read_only_value(const read_only_value &) = default;
