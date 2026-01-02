@@ -9,36 +9,44 @@ import grace.memory;
 
 export namespace grace::ranges {
 
-// TODO: noexcept
-
 // This class allows to create an owning view from a fancy pointer.
 //
 // It is better then `views::iota(0uz, size) | views::transform(grace::fn::bind::index_in(ptr))`
 // because it only stores 2 pointers, while this combined view stores two `std::size_t`s and a ptr
 template<typename Ptr, typename Sent>
-requires requires(Ptr ptr, Sent sent) { memory::to_address_arr(ptr) == sent; }
+requires
+    std::move_constructible<Ptr> &&
+    std::copy_constructible<Sent> &&
+    requires(Ptr ptr, Sent sent) {
+        memory::to_address_arr(ptr) == sent;
+    }
 class [[nodiscard]] pointer_view : public std::ranges::view_interface<pointer_view<Ptr, Sent>>
 {
 public:
     constexpr pointer_view(Ptr ptr, Sent sent)
-        : m_ptr{std::move(ptr)}
-        , m_sent{std::move(sent)}
+        noexcept(noexcept(impl{std::move(ptr), std::move(sent)}))
+        : m{std::move(ptr), std::move(sent)}
     {
     }
 
     constexpr pointer_view(Ptr ptr, std::size_t n)
-        : m_ptr{std::move(ptr)}
-        , m_sent{memory::to_address_arr(m_ptr) + n}
+        noexcept(noexcept(impl{std::move(ptr), memory::to_address_arr(ptr) + n}))
+        : m{std::move(ptr), memory::to_address_arr(m.ptr) + n}
     {
     }
 
 public:
-    [[nodiscard]] constexpr auto begin() const { return memory::to_address_arr(m_ptr); }
-    [[nodiscard]] constexpr auto end() const { return m_sent; }
+    [[nodiscard]] constexpr auto begin() const noexcept { return memory::to_address_arr(m.ptr); }
+    [[nodiscard]] constexpr auto end() const noexcept(std::is_nothrow_copy_constructible_v<Sent>) { return m.sent; }
 
 private:
-    Ptr m_ptr;
-    Sent m_sent;
+    struct impl {
+        Ptr ptr;
+        Sent sent;
+    };
+
+private:
+    impl m;
 };
 
 template<typename Ptr>

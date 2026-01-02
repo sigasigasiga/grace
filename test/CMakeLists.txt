@@ -1,5 +1,6 @@
 add_subdirectory(bit)
 add_subdirectory(fn)
 add_subdirectory(memory)
+add_subdirectory(ranges)
 add_subdirectory(tuple)
 add_subdirectory(utility)
