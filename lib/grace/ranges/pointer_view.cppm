@@ -24,29 +24,29 @@ class [[nodiscard]] pointer_view : public std::ranges::view_interface<pointer_vi
 {
 public:
     constexpr pointer_view(Ptr ptr, Sent sent)
-        noexcept(noexcept(impl{std::move(ptr), std::move(sent)}))
-        : m{std::move(ptr), std::move(sent)}
+        noexcept(
+            std::is_nothrow_move_constructible_v<Ptr> &&
+            std::is_nothrow_move_constructible_v<Sent>
+        )
+        : m_ptr{std::move(ptr)}
+        , m_sent{std::move(sent)}
     {
     }
 
     constexpr pointer_view(Ptr ptr, std::size_t n)
-        noexcept(noexcept(impl{std::move(ptr), memory::to_address_arr(ptr) + n}))
-        : m{std::move(ptr), memory::to_address_arr(m.ptr) + n}
+        noexcept(std::is_nothrow_move_constructible_v<Ptr>)
+        : m_ptr{std::move(ptr)}
+        , m_sent{memory::to_address_arr(m_ptr) + n}
     {
     }
 
 public:
-    [[nodiscard]] constexpr auto begin() const noexcept { return memory::to_address_arr(m.ptr); }
-    [[nodiscard]] constexpr auto end() const noexcept(std::is_nothrow_copy_constructible_v<Sent>) { return m.sent; }
+    [[nodiscard]] constexpr auto begin() const noexcept { return memory::to_address_arr(m_ptr); }
+    [[nodiscard]] constexpr auto end() const noexcept(std::is_nothrow_copy_constructible_v<Sent>) { return m_sent; }
 
 private:
-    struct impl {
-        Ptr ptr;
-        Sent sent;
-    };
-
-private:
-    impl m;
+    Ptr m_ptr;
+    Sent m_sent;
 };
 
 template<typename Ptr>
