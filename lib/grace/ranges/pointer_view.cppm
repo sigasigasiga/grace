@@ -35,6 +35,7 @@ public:
 
     constexpr pointer_view(Ptr ptr, std::size_t n)
         noexcept(std::is_nothrow_move_constructible_v<Ptr>)
+        requires std::same_as<Sent, typename std::pointer_traits<Ptr>::element_type *>
         : m_ptr{std::move(ptr)}
         , m_sent{memory::to_address_arr(m_ptr) + n}
     {

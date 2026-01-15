@@ -1,9 +1,8 @@
-#include <memory>
-
 #define GCC_SUX // TODO:
 
 #ifndef GCC_SUX
 
+#include <memory>
 #include <numeric>
 #include <ranges>
 
@@ -45,8 +44,6 @@ consteval void test() {
             std::unreachable();
         }
     }
-#else // GCC_SUX
-    std::ignore = p;
 #endif // GCC_SUX
 }
 
