@@ -17,4 +17,12 @@ template<
     return {};
 }
 
+template<typename FwdTuple>
+[[nodiscard]] constexpr auto index_sequence_for_tuple(FwdTuple &&)
+    noexcept
+    -> decltype(index_sequence_for_tuple<FwdTuple>())
+{
+    return index_sequence_for_tuple<FwdTuple>();
+}
+
 } // namespace grace::tuple
