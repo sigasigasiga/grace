@@ -1,1 +1,1 @@
-vim.opt.makeprg = 'cmake --build build/'
+vim.opt.makeprg = 'cmake'
