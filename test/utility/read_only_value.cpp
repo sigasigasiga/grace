@@ -19,4 +19,9 @@ int main()
     if (std::move(v).release() != 777) {
         return 2;
     }
+
+    constexpr std::hash<read_only_value<int>> h;
+    if (h(read_only_value{777}) != std::hash<int>{}(777)) {
+        return 3;
+    }
 }

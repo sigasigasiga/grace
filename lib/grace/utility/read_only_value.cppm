@@ -7,6 +7,8 @@ module;
 export module grace.utility:read_only_value;
 
 import :storage_base;
+import :private_base_cast;
+import grace.type_traits;
 
 export namespace grace::utility {
 
@@ -57,15 +59,23 @@ read_only_value(T) -> read_only_value<T>;
 
 } // namespace grace::utility
 
-using grace::utility::read_only_value;
-
 export template<typename T>
-struct std::hash<read_only_value<T>>
+struct std::hash<grace::utility::read_only_value<T>> : private std::hash<T>
 {
-    [[nodiscard]] constexpr static auto operator()(const read_only_value<T>& v)
-        noexcept(noexcept(std::hash<T>{}(v.get())))
-        -> decltype(std::hash<T>{}(v.get()))
+public:
+    using std::hash<T>::hash;
+
+public:
+    template<
+        typename Self,
+        typename FwdBase = grace::type_traits::copy_cvref_t<Self &&, std::hash<T>>>
+    [[nodiscard]] constexpr auto operator()(
+        this Self &&self,
+        const grace::utility::read_only_value<T>& v
+    )
+        noexcept(noexcept(grace::utility::private_base_cast<FwdBase>(self)(v.get())))
+        -> decltype(grace::utility::private_base_cast<FwdBase>(self)(v.get()))
     {
-        return std::hash<T>{}(v.get());
+        return grace::utility::private_base_cast<FwdBase>(self)(v.get());
     }
 };
