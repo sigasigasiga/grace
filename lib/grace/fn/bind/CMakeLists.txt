@@ -10,6 +10,7 @@ target_sources(
 
     bind_expression.cppm
     compose.cppm
+    consign.cppm
     lazy_eval.cppm
     lift_function.cppm
     lift_invocable.cppm
