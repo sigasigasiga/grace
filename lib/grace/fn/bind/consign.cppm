@@ -1,6 +1,7 @@
 module;
 
 #include <functional>
+#include <type_traits>
 
 export module grace.fn.bind:consign;
 
