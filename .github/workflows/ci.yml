@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  GCC_VERSION: 16
+  CLANG_VERSION: 22
+
+jobs:
+  gcc-libstdcxx:
+    name: gcc + libstdc++
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GCC ${{ env.GCC_VERSION }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-${{ env.GCC_VERSION }} g++-${{ env.GCC_VERSION }} ninja-build
+
+      - name: Configure
+        env:
+          CC: gcc-${{ env.GCC_VERSION }}
+          CXX: g++-${{ env.GCC_VERSION }}
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        working-directory: build
+        run: ctest --output-on-failure
+
+  clang-libstdcxx:
+    name: clang + libstdc++
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clang ${{ env.CLANG_VERSION }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-${{ env.CLANG_VERSION }} ninja-build
+
+      - name: Configure
+        env:
+          CC: clang-${{ env.CLANG_VERSION }}
+          CXX: clang++-${{ env.CLANG_VERSION }}
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        working-directory: build
+        run: ctest --output-on-failure
+
+  clang-libcxx:
+    name: clang + libc++
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clang ${{ env.CLANG_VERSION }} and libc++
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-${{ env.CLANG_VERSION }} libc++-${{ env.CLANG_VERSION }}-dev ninja-build
+
+      - name: Configure
+        env:
+          CC: clang-${{ env.CLANG_VERSION }}
+          CXX: clang++-${{ env.CLANG_VERSION }}
+          CXXFLAGS: -stdlib=libc++
+          LDFLAGS: -stdlib=libc++
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        working-directory: build
+        run: ctest --output-on-failure
