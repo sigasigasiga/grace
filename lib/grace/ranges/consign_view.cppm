@@ -21,44 +21,47 @@ class consign_view : public std::ranges::view_interface<consign_view<View, Value
                      private utility::move_only
 {
 private:
-    View view_;
-    Value value_;
+    View m_view;
+    Value m_value;
 
 public:
     constexpr consign_view(View view, Value value)
-        : view_{std::move(view)}
-        , value_{std::move(value)}
+        : m_view{std::move(view)}
+        , m_value{std::move(value)}
     {
     }
 
 public:
     template<typename Self, typename USelf = type_traits::copy_cvref_t<Self &&, consign_view>>
     constexpr auto base(this Self &&self)
-        noexcept(noexcept(View(std::forward<Self>(self).view_)))
-        -> decltype(View(std::forward<Self>(self).view_))
+        noexcept(noexcept(View(utility::private_base_cast<USelf>(self).m_view)))
+        -> decltype(View(utility::private_base_cast<USelf>(self).m_view))
     {
-        return View(utility::private_base_cast<USelf>(self).view_);
+        return View(utility::private_base_cast<USelf>(self).m_view);
     }
 
-    constexpr auto begin() const
-        noexcept(noexcept(std::ranges::begin(this->view_)))
-        -> decltype(std::ranges::begin(this->view_))
+    // NB: `View::begin` and `View::end` may be mutable (e.g. `filter_view`)
+    template<typename Self, typename USelf = type_traits::copy_cvref_t<Self &&, consign_view>>
+    constexpr auto begin(this Self &&self)
+        noexcept(noexcept(std::ranges::begin(utility::private_base_cast<USelf>(self).m_view)))
+        -> decltype(std::ranges::begin(utility::private_base_cast<USelf>(self).m_view))
     {
-        return std::ranges::begin(this->view_);
+        return std::ranges::begin(utility::private_base_cast<USelf>(self).m_view);
     }
 
-    constexpr auto end() const
-        noexcept(noexcept(std::ranges::end(this->view_)))
-        -> decltype(std::ranges::end(this->view_))
+    template<typename Self, typename USelf = type_traits::copy_cvref_t<Self &&, consign_view>>
+    constexpr auto end(this Self &&self)
+        noexcept(noexcept(std::ranges::end(utility::private_base_cast<USelf>(self).m_view)))
+        -> decltype(std::ranges::end(utility::private_base_cast<USelf>(self).m_view))
     {
-        return std::ranges::end(this->view_);
+        return std::ranges::end(utility::private_base_cast<USelf>(self).m_view);
     }
 
     constexpr auto size() const
-        noexcept(noexcept(std::ranges::size(this->view_)))
-        -> decltype(std::ranges::size(this->view_))
+        noexcept(noexcept(std::ranges::size(this->m_view)))
+        -> decltype(std::ranges::size(this->m_view))
     {
-        return std::ranges::size(this->view_);
+        return std::ranges::size(this->m_view);
     }
 };
 
