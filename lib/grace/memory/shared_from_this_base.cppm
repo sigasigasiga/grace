@@ -34,7 +34,8 @@ private:
     template<typename Self>
     std::shared_ptr<Self> make_sft(this Self &self)
     {
-        return std::static_pointer_cast<Self>(self.raw_sft());
+        // NB: must use `dynamic_cast` because `static_cast` does not work with virtual inheritance
+        return std::dynamic_pointer_cast<Self>(self.raw_sft());
     }
 
     template<typename Self>
@@ -46,8 +47,9 @@ private:
     template<typename Self>
     std::weak_ptr<Self> make_wft(this Self &self) noexcept
     {
-        // `weak_from_this` should never throw, thus it cannot be delegated to `make_sft`
-        return std::static_pointer_cast<Self>(self.raw_wft().lock());
+        // NB: must use `dynamic_cast` because `static_cast` does not work with virtual inheritance
+        // NB: `weak_from_this` should never throw, thus it cannot be delegated to `make_sft`
+        return std::dynamic_pointer_cast<Self>(self.raw_wft().lock());
     }
 };
 
