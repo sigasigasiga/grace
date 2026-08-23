@@ -1,17 +1,10 @@
-#define GCC_SUX // TODO:
-
-#ifndef GCC_SUX
-
 #include <memory>
 #include <numeric>
 #include <ranges>
 
 import grace.ranges;
 
-#endif // GCC_SUX
-
 consteval void test() {
-#ifndef GCC_SUX
     {
         constexpr auto sz = 10uz;
         auto p = std::make_unique<int[]>(sz);
@@ -44,7 +37,6 @@ consteval void test() {
             std::unreachable();
         }
     }
-#endif // GCC_SUX
 }
 
 int main() {
