@@ -72,7 +72,7 @@ jobs:
       - name: Install Clang ${{ env.CLANG_VERSION }} and libc++
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-${{ env.CLANG_VERSION }} libc++-${{ env.CLANG_VERSION }}-dev libc++abi-${{ env.CLANG_VERSION }}-dev ninja-build
+          sudo apt-get install -y clang-${{ env.CLANG_VERSION }} libc++-${{ env.CLANG_VERSION }}-dev ninja-build
 
       - name: Configure
         env:
