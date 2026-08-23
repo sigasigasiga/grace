@@ -5,9 +5,6 @@ target_link_libraries(prepend_deleter PRIVATE grace.memory)
 add_executable(to_address to_address.cpp)
 target_link_libraries(to_address PRIVATE grace.memory)
 
-# enable testing functionality
-enable_testing()
-
 # define tests
 add_test(
   NAME prepend_deleter

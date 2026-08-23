@@ -5,9 +5,6 @@ target_link_libraries(stored_func_invoker PRIVATE grace.fn.bind grace.utility)
 add_executable(fold_invoke fold_invoke.cpp)
 target_link_libraries(fold_invoke PRIVATE grace.fn.invoke)
 
-# enable testing functionality
-enable_testing()
-
 # define tests
 add_test(
   NAME stored_func_invoker
