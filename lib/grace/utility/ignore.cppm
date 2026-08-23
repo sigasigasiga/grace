@@ -1,6 +1,6 @@
 export module grace.utility:ignore;
 
-export namespace grace::util {
+export namespace grace::utility {
 
 class [[nodiscard]] ignore_t
 {
@@ -11,4 +11,4 @@ public:
 
 inline constexpr ignore_t ignore;
 
-} // namespace grace::util
+} // namespace grace::utility
