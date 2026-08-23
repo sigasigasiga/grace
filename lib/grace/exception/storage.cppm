@@ -47,4 +47,4 @@ private:
 template<typename Ex>
 storage(Ex) -> storage<Ex>;
 
-} // namespace grace::util
+} // namespace grace::exception
