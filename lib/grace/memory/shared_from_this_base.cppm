@@ -25,31 +25,25 @@ public:
     [[nodiscard]] auto weak_from_this(this auto &&self) noexcept { return self.make_wft(); }
 
 private:
-    template<typename Self>
-    auto raw_sft(this Self &self)
-    {
-        return self.enable_shared_from_this::shared_from_this();
-    }
-
+    // NB: can't use `static_pointer_cast` because it does not work with virtual inheritance
     template<typename Self>
     std::shared_ptr<Self> make_sft(this Self &self)
     {
-        // NB: must use `dynamic_cast` because `static_cast` does not work with virtual inheritance
-        return std::dynamic_pointer_cast<Self>(self.raw_sft());
-    }
-
-    template<typename Self>
-    auto raw_wft(this Self &self) noexcept
-    {
-        return self.enable_shared_from_this::weak_from_this();
+        return std::shared_ptr<Self>(
+            self.enable_shared_from_this::shared_from_this(),
+            std::addressof(self)
+        );
     }
 
     template<typename Self>
     std::weak_ptr<Self> make_wft(this Self &self) noexcept
     {
-        // NB: must use `dynamic_cast` because `static_cast` does not work with virtual inheritance
         // NB: `weak_from_this` should never throw, thus it cannot be delegated to `make_sft`
-        return std::dynamic_pointer_cast<Self>(self.raw_wft().lock());
+        if (auto ptr = self.enable_shared_from_this::weak_from_this().lock()) {
+            return std::shared_ptr<Self>(std::move(ptr), std::addressof(self));
+        } else {
+            return std::weak_ptr<Self>();
+        }
     }
 };
 
