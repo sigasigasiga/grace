@@ -18,6 +18,7 @@ public:
 public:
     constexpr flag_set() = default;
     /* implicit */ constexpr flag_set(T value) noexcept : m_value{std::to_underlying(value)} {}
+    explicit constexpr flag_set(value_type value) noexcept : m_value{value} {}
 
 public:
     constexpr flag_set &operator&=(flag_set rhs) noexcept
@@ -34,7 +35,7 @@ public:
 
     [[nodiscard]] friend constexpr flag_set operator&(flag_set lhs, flag_set rhs) noexcept { return lhs &= rhs; }
     [[nodiscard]] friend constexpr flag_set operator|(flag_set lhs, flag_set rhs) noexcept { return lhs |= rhs; }
-    [[nodiscard]] friend constexpr flag_set operator~(flag_set set) noexcept { return ~set.m_value; }
+    [[nodiscard]] friend constexpr flag_set operator~(flag_set set) noexcept { return flag_set(~set.m_value); }
 
     [[nodiscard]] friend constexpr bool operator==(flag_set lhs, flag_set rhs) = default;
 
