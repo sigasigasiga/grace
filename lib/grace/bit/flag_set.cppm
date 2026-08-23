@@ -6,7 +6,7 @@ module;
 
 export module grace.bit:flag_set;
 
-export namespace grace::util {
+export namespace grace::bit {
 
 template<typename T>
 requires std::is_enum_v<T>
@@ -53,9 +53,9 @@ private:
     value_type m_value;
 };
 
-} // namespace grace::util
+} // namespace grace::bit
 
-using grace::util::flag_set;
+using grace::bit::flag_set;
 
 export template<typename T>
 struct std::hash<flag_set<T>>
