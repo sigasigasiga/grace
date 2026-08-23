@@ -13,12 +13,12 @@ struct lift_function;
 
 template<
     typename Ret,
-    typename... Args,
+    typename ...Args,
     bool Noexcept,
-    Ret (*Fn)(Args...) noexcept(Noexcept)>
+    Ret (*Fn)(Args ...) noexcept(Noexcept)>
 struct lift_function<Fn>
 {
-    static constexpr Ret operator()(Args &&...args) noexcept(Noexcept)
+    static constexpr Ret operator()(Args ...args) noexcept(Noexcept)
     {
         return Fn(std::forward<Args>(args)...);
     }
