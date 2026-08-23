@@ -12,7 +12,7 @@ env:
 
 jobs:
   gcc-libstdcxx:
-    name: GCC ${{ env.GCC_VERSION }} + libstdc++
+    name: gcc + libstdc++
     runs-on: ubuntu-26.04
 
     steps:
@@ -37,7 +37,7 @@ jobs:
         run: ctest --output-on-failure
 
   clang-libstdcxx:
-    name: Clang ${{ env.CLANG_VERSION }} + libstdc++
+    name: clang + libstdc++
     runs-on: ubuntu-26.04
 
     steps:
@@ -62,7 +62,7 @@ jobs:
         run: ctest --output-on-failure
 
   clang-libcxx:
-    name: Clang ${{ env.CLANG_VERSION }} + libc++
+    name: clang + libc++
     runs-on: ubuntu-26.04
 
     steps:
