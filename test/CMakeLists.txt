@@ -1,3 +1,4 @@
+add_subdirectory(algorithm)
 add_subdirectory(bit)
 add_subdirectory(fn)
 add_subdirectory(memory)
