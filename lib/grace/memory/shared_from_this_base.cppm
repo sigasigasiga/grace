@@ -16,9 +16,9 @@ class esft_common_base : public std::enable_shared_from_this<esft_common_base>
 {
 protected:
     constexpr esft_common_base() = default;
+
     esft_common_base(const esft_common_base &) = default;
-    esft_common_base(esft_common_base &&) = default;
-    ~esft_common_base() = default;
+    esft_common_base &operator=(const esft_common_base &) = default;
 
 public:
     [[nodiscard]] auto shared_from_this(this auto &&self) { return self.make_sft(); }
@@ -87,9 +87,9 @@ public:
 
 protected:
     constexpr explicit shared_from_this_base(sftb_tag) noexcept {}
+
     shared_from_this_base(const shared_from_this_base &) = default;
-    shared_from_this_base(shared_from_this_base &&) = default;
-    ~shared_from_this_base() = default;
+    shared_from_this_base &operator=(const shared_from_this_base &) = default;
 };
 
 template<sftb_makeable T>

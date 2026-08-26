@@ -253,6 +253,36 @@ void universal_make_shared_plain_type() {
     }
 }
 
+// ============================================================================
+// verify that derived classes are copyable
+// ============================================================================
+
+struct copyable_esft : public esft_common_base
+{};
+
+static_assert(std::default_initializable<copyable_esft>);
+
+static_assert(std::copy_constructible<copyable_esft>);
+static_assert(std::copyable<copyable_esft>);
+
+static_assert(std::move_constructible<copyable_esft>);
+static_assert(std::movable<copyable_esft>);
+
+static_assert(std::destructible<copyable_esft>);
+
+struct copyable_sftb : public shared_from_this_base
+{
+    explicit copyable_sftb(sftb_tag tag) : shared_from_this_base(tag) {}
+};
+
+static_assert(std::copy_constructible<copyable_sftb>);
+static_assert(std::copyable<copyable_sftb>);
+
+static_assert(std::move_constructible<copyable_sftb>);
+static_assert(std::movable<copyable_sftb>);
+
+static_assert(std::destructible<copyable_sftb>);
+
 int main() {
     esft_simple_inheritance();
     esft_weak_from_this_on_non_owned_object();
