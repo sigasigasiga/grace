@@ -257,8 +257,10 @@ void universal_make_shared_plain_type() {
 // verify that derived classes are copyable
 // ============================================================================
 
-struct copyable_esft : public esft_common_base
-{};
+struct copyable_esft : public std::enable_shared_from_this<copyable_esft>
+{
+    copyable_esft() = default;
+};
 
 static_assert(std::default_initializable<copyable_esft>);
 
