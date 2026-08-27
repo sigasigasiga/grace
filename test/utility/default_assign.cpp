@@ -147,6 +147,25 @@ int main()
         }
     }
 
+    // `To` != `FwdFrom`
+    {
+        swap_member::reset_counters();
+        swap_member a;
+        a = 42;
+
+        if (a.value != 42) {
+            throw "Unexpected value after assignment from int";
+        }
+
+        if (swap_member::int_ctor_calls != 1) {
+            throw "Unexpected number of int constructor calls after assignment from int";
+        }
+
+        if (swap_member::swap_calls != 1) {
+            throw "Unexpected number of swap calls after assignment from int";
+        }
+    }
+
     // move-assignment also goes through the swap path
     {
         swap_member::reset_counters();
