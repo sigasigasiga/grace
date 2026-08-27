@@ -1,5 +1,6 @@
 module;
 
+#include <concepts>
 #include <memory>
 #include <type_traits>
 #include <utility>
@@ -8,33 +9,43 @@ export module grace.utility:default_assign;
 
 namespace default_assign {
 
-template<typename FwdTo, typename FwdFrom, typename To = std::remove_cvref_t<FwdTo>>
-FwdTo &impl(FwdTo &&to, FwdFrom &&from, int)
-    noexcept(noexcept(To(std::forward<FwdFrom>(from)).swap(to)))
-    requires requires { To(std::forward<FwdFrom>(from)).swap(to); }
+template<typename T>
+constexpr auto ufcs_swap(T &a, T &b, int)
+    noexcept(noexcept(a.swap(b)))
+    -> decltype(a.swap(b))
 {
-    if (std::addressof(to) != std::addressof(from)) {
-        To(std::forward<FwdFrom>(from)).swap(to);
-    }
-
-    return to;
+    return a.swap(b);
 }
 
-template<typename FwdTo, typename FwdFrom, typename To = std::remove_cvref_t<FwdTo>>
-FwdTo &impl(FwdTo &&to, FwdFrom &&from, ...)
-    noexcept(
-        noexcept(To(std::forward<FwdFrom>(from))) &&
-        noexcept(swap(to, std::declval<To &>()))
-    )
-    requires requires(To tmp) {
-        To(std::forward<FwdFrom>(from));
-        swap(to, tmp);
-    }
+template<typename T>
+constexpr auto ufcs_swap(T &a, T &b, ...)
+    noexcept(noexcept(swap(a, b)))
+    -> decltype(swap(a, b))
 {
-    if (std::addressof(to) != std::addressof(from)) {
-        To tmp(std::forward<FwdFrom>(from));
-        swap(to, tmp); // ADL swap
+    return swap(a, b);
+}
+
+template<typename MutTo, typename FwdFrom>
+constexpr MutTo &impl(MutTo &to, FwdFrom &&from)
+    noexcept(
+        std::is_nothrow_constructible_v<MutTo, FwdFrom &&>
+    )
+    requires
+        std::same_as<MutTo, std::remove_cv_t<MutTo>> &&
+        std::constructible_from<MutTo, FwdFrom &&> &&
+        (noexcept((ufcs_swap)(to, to, 0)))
+{
+    // TODO: Well, there's a case when `From` is a base class of `To`,
+    //       and the address check will not work.
+    //       Although I'm not sure if this is a valid case for assignment
+    if constexpr (std::same_as<MutTo, std::remove_cvref_t<FwdFrom>>) {
+        if (std::addressof(to) == std::addressof(from)) {
+            return to;
+        }
     }
+
+    MutTo tmp(std::forward<FwdFrom>(from));
+    (ufcs_swap)(to, tmp, 0);
 
     return to;
 }
@@ -44,17 +55,21 @@ FwdTo &impl(FwdTo &&to, FwdFrom &&from, ...)
 export namespace grace::utility {
 
 // Generic way to implement assignment for any class that has
-// 1. `To(FwdFrom &&)` construcotr
-// 2. `.swap` method
+// 1. `To(FwdFrom &&)` constructor
+// 2. noexcept-enabled `.swap` method or a `swap(To &, To &)` function available via ADL
 //
-// NB: I don't really like the idea of returning an lvalue reference
-//     but I don't like inconsistencies with the standard even more
-template<typename FwdTo, typename FwdFrom, typename To = std::remove_cvref_t<FwdTo>>
-auto default_assign(FwdTo &&to, FwdFrom &&from)
-    noexcept(noexcept(default_assign::impl(std::forward<FwdTo>(to), std::forward<FwdFrom>(from), 0)))
-    -> decltype(default_assign::impl(std::forward<FwdTo>(to), std::forward<FwdFrom>(from), 0))
+// Self-assignment is optimized away
+//
+// Usage:
+// ```
+// my_class &operator=(T &&rhs) { return default_assign(*this, std::forward<T>(rhs)); }
+// ```
+template<typename To, typename FwdFrom>
+constexpr auto default_assign(To &to, FwdFrom &&from)
+    noexcept(noexcept(default_assign::impl(to, std::forward<FwdFrom>(from))))
+    -> decltype(default_assign::impl(to, std::forward<FwdFrom>(from)))
 {
-    return default_assign::impl(std::forward<FwdTo>(to), std::forward<FwdFrom>(from), 0);
+    return default_assign::impl(to, std::forward<FwdFrom>(from));
 }
 
 } // namespace grace::utility
