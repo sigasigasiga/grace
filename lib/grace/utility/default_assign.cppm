@@ -28,15 +28,12 @@ constexpr auto ufcs_swap(T &a, T &b, ...)
 template<typename MutTo, typename FwdFrom>
 constexpr MutTo &impl(MutTo &to, FwdFrom &&from)
     noexcept(
-        std::is_nothrow_constructible_v<MutTo, FwdFrom &&> &&
-        noexcept(ufcs_swap(to, to, 0))
+        std::is_nothrow_constructible_v<MutTo, FwdFrom &&>
     )
     requires
         std::same_as<MutTo, std::remove_cv_t<MutTo>> &&
         std::constructible_from<MutTo, FwdFrom &&> &&
-        requires(MutTo &obj) {
-            ufcs_swap(obj, obj, 0);
-        }
+        (noexcept((ufcs_swap)(to, to, 0)))
 {
     // TODO: Well, there's a case when `From` is a base class of `To`,
     //       and the address check will not work.
@@ -48,7 +45,7 @@ constexpr MutTo &impl(MutTo &to, FwdFrom &&from)
     }
 
     MutTo tmp(std::forward<FwdFrom>(from));
-    ufcs_swap(to, tmp, 0); // FIXME: it MUST be `noexcept` because otherwise the object will be half-swappeda
+    (ufcs_swap)(to, tmp, 0);
 
     return to;
 }
@@ -59,7 +56,7 @@ export namespace grace::utility {
 
 // Generic way to implement assignment for any class that has
 // 1. `To(FwdFrom &&)` constructor
-// 2. `.swap` method or a `swap(To &, To &)` function available via ADL
+// 2. noexcept-enabled `.swap` method or a `swap(To &, To &)` function available via ADL
 //
 // Self-assignment is optimized away
 //
