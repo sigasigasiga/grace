@@ -164,7 +164,7 @@ constexpr auto bind(F &&fn, Args &&...args)
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     ))
 {
-    // `make_tuple` is not `constexpr`. duh
+    // `make_tuple` is not SFINAE-friendly. duh
     return bind_impl::binder(
         std::forward<F>(fn),
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
