@@ -8,6 +8,7 @@ target_sources(
     FILE_SET
     CXX_MODULES FILES
 
+    bind.cppm
     bind_expression.cppm
     compose.cppm
     consign.cppm
@@ -27,6 +28,9 @@ target_link_libraries(
     grace.fn.bind
 
     grace.compat
-    grace.fn.op
     grace.fn.invoke
+    grace.fn.op
+    grace.meta
+    grace.type_traits
+    grace.utility
 )

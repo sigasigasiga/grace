@@ -1,5 +1,6 @@
 export module grace.fn.bind;
 
+export import :bind;
 export import :bind_expression;
 export import :compose;
 export import :consign;
