@@ -3,6 +3,8 @@
 
 import grace.memory;
 
+namespace {
+
 using namespace grace::memory;
 
 // ============================================================================
@@ -284,6 +286,8 @@ static_assert(std::move_constructible<copyable_sftb>);
 static_assert(std::movable<copyable_sftb>);
 
 static_assert(std::destructible<copyable_sftb>);
+
+} // anonymous namespace
 
 int main() {
     esft_simple_inheritance();
