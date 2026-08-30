@@ -1,6 +1,8 @@
 module;
 
+#include <algorithm>
 #include <functional>
+#include <limits>
 #include <tuple>
 
 export module grace.fn.bind:bind;
@@ -11,10 +13,19 @@ import grace.meta;
 import grace.type_traits;
 import grace.utility;
 
-namespace bind_impl {
-
 template<std::size_t I>
 using p = grace::meta::overload_priority<I>;
+
+template<int V>
+using int_constant = std::integral_constant<int, V>;
+
+namespace grace::fn::bind {
+
+export template<typename BindExpr>
+class bind_expression_argument_count : public int_constant<std::numeric_limits<int>::max()> {};
+
+export template<typename BindExpr>
+inline constexpr auto bind_expression_argument_count_v = bind_expression_argument_count<BindExpr>::value;
 
 template<
     std::size_t I,
@@ -33,14 +44,14 @@ template<
     typename ...Args,
     typename BoundTuple = std::remove_cvref_t<FwdBoundTuple>,
     typename Elem = std::tuple_element_t<I, BoundTuple>,
-    int Placeholder = std::is_placeholder_v<Elem>>
-requires (Placeholder > 0)
+    int Placeholder = std::is_placeholder_v<Elem>,
+    int Idx = Placeholder - 1>
+requires (0 <= Idx && Idx < sizeof...(Args))
 constexpr auto get_arg(p<1>, FwdBoundTuple &&bound, Args &&...args)
     noexcept
     -> decltype(auto)
 {
-    constexpr std::size_t idx = Placeholder - 1;
-    return std::forward<Args...[idx]>(args...[idx]);
+    return std::forward<Args...[Idx]>(args...[Idx]);
 }
 
 template<
@@ -113,6 +124,7 @@ public:
         typename Self,
         typename ...Args,
         typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, binder>>
+    requires (sizeof...(Args) <= bind_expression_argument_count_v<binder>)
     constexpr auto operator()(this Self &&self, Args &&...args)
         noexcept(noexcept((invoke_helper)(
             std::make_index_sequence<std::tuple_size_v<BoundTuple>>{},
@@ -143,35 +155,40 @@ private:
 template<typename F, typename BoundTuple>
 binder(F, BoundTuple) -> binder<F, BoundTuple>;
 
-} // namespace bind_impl
+template<typename ...BoundArgs>
+constexpr auto count_args() {
+    return std::ranges::max(
+        {0, (std::is_bind_expression_v<BoundArgs> ? bind_expression_argument_count_v<BoundArgs> : std::is_placeholder_v<BoundArgs>)...}
+    );
+}
 
-export template<typename F, typename BoundTuple>
-class std::is_bind_expression<bind_impl::binder<F, BoundTuple>> : std::true_type {};
-
-export namespace grace::fn::bind {
+template<typename F, typename ...BoundArgs>
+class bind_expression_argument_count<binder<F, std::tuple<BoundArgs...>>> : public int_constant<count_args<BoundArgs...>()>
+{};
 
 // Like `std::bind` but:
 // 1. Supports forwarding (i.e. `std::move(bind_result)()`)
 // 2. Supports NTTP-stored callable (i.e. `bind<some_function>()`)
-template<typename F, typename ...Args>
+// 3. Cannot be invoked with more arguments than needed (i.e. `bind(f, _1)(1, 2)` is an error)
+export template<typename F, typename ...Args>
 constexpr auto bind(F &&fn, Args &&...args)
-    noexcept(noexcept(bind_impl::binder(
+    noexcept(noexcept(binder(
         std::forward<F>(fn),
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     )))
-    -> decltype(bind_impl::binder(
+    -> decltype(binder(
         std::forward<F>(fn),
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     ))
 {
     // `make_tuple` is not SFINAE-friendly. duh
-    return bind_impl::binder(
+    return binder(
         std::forward<F>(fn),
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     );
 };
 
-template<auto F, typename ...Args>
+export template<auto F, typename ...Args>
 constexpr auto bind(Args &&...args)
     noexcept(noexcept((bind)(lift_invocable<F>{}, std::forward<Args>(args)...)))
     -> decltype((bind)(lift_invocable<F>{}, std::forward<Args>(args)...))
@@ -180,3 +197,6 @@ constexpr auto bind(Args &&...args)
 }
 
 } // namespace grace::fn::bind
+
+export template<typename F, typename BoundTuple>
+class std::is_bind_expression<grace::fn::bind::binder<F, BoundTuple>> : public std::true_type {};
