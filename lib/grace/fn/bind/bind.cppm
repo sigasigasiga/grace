@@ -22,7 +22,7 @@ using int_constant = std::integral_constant<int, V>;
 namespace grace::fn::bind {
 
 export template<typename BindExpr>
-class bind_expression_argument_count : public int_constant<std::numeric_limits<int>::max()> {};
+struct bind_expression_argument_count : int_constant<std::numeric_limits<int>::max()> {};
 
 export template<typename BindExpr>
 inline constexpr auto bind_expression_argument_count_v = bind_expression_argument_count<BindExpr>::value;
@@ -166,7 +166,7 @@ constexpr auto count_args() {
 }
 
 template<typename F, typename ...BoundArgs>
-class bind_expression_argument_count<binder<F, std::tuple<BoundArgs...>>> : public int_constant<count_args<BoundArgs...>()>
+struct bind_expression_argument_count<binder<F, std::tuple<BoundArgs...>>> : int_constant<count_args<BoundArgs...>()>
 {};
 
 // Like `std::bind` but:
