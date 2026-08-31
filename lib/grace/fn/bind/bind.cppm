@@ -123,8 +123,11 @@ public:
     template<
         typename Self,
         typename ...Args,
-        typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, binder>>
-    requires (sizeof...(Args) <= bind_expression_argument_count_v<binder>)
+        typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, binder>,
+        int ArgCount = bind_expression_argument_count_v<binder>>
+    requires
+        (ArgCount == std::numeric_limits<int>::max()) ||
+        (sizeof...(Args) == ArgCount)
     constexpr auto operator()(this Self &&self, Args &&...args)
         noexcept(noexcept((invoke_helper)(
             std::make_index_sequence<std::tuple_size_v<BoundTuple>>{},

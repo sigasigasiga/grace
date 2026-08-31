@@ -130,6 +130,10 @@ consteval void test() {
         if (test_invocability(b, 100, 5, 2, 3, 4)) {
             throw "nested bind expression support failed (extra arguments are not okay)";
         }
+
+        if (test_invocability(b, 100)) {
+            throw "nested bind expression support failed (not enough arguments is not okay)";
+        }
     }
 
     // nested std::bind support
@@ -142,6 +146,22 @@ consteval void test() {
 
         if (b(5, 2, 3, 4) != -10) {
             throw "nested std::bind support failed (extra arguments are okay)";
+        }
+    }
+
+    {
+        auto b = f::bind([](auto, auto) {}, _1, _2);
+
+        if (test_invocability(b, 1)) {
+            throw "bind expression should not be invocable with 1 argument";
+        }
+
+        if (!test_invocability(b, 1, 2)) {
+            throw "bind expression should be invocable with 2 arguments";
+        }
+
+        if (test_invocability(b, 1, 2, 3)) {
+            throw "bind expression should not be invocable with 3 arguments";
         }
     }
 }
