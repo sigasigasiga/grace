@@ -164,6 +164,22 @@ consteval void test() {
             throw "bind expression should not be invocable with 3 arguments";
         }
     }
+
+    {
+        auto b = f::bind(double_it, _5);
+
+        if (b(0, 0, 0, 0, 21) != 42) {
+            throw "bind expression with gaps in placeholders failed";
+        }
+
+        if (test_invocability(b, 0, 0, 0)) {
+            throw "bind expression with gaps in placeholders should not be invocable with too few arguments";
+        }
+
+        if (test_invocability(b, 0, 0, 0, 0, 0, 0)) {
+            throw "bind expression with gaps in placeholders should not be invocable with too many arguments";
+        }
+    }
 }
 
 } // anonymous namespace
