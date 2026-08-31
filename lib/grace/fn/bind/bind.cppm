@@ -201,5 +201,5 @@ constexpr auto bind(Args &&...args)
 
 } // namespace grace::fn::bind
 
-export template<typename F, typename BoundTuple>
+template<typename F, typename BoundTuple>
 class std::is_bind_expression<grace::fn::bind::binder<F, BoundTuple>> : public std::true_type {};
