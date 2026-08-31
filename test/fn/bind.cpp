@@ -180,6 +180,10 @@ consteval void test() {
             throw "bind expression with gaps in placeholders should not be invocable with too many arguments";
         }
     }
+
+
+    // TODO: test for `noexcept`
+    // TODO: test that bound arguments also get forwarded correctly
 }
 
 } // anonymous namespace
