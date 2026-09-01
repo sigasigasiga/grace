@@ -118,34 +118,42 @@ consteval void test() {
 
     // nested bind expression support
     {
-        // bind(bind(f, _1), bind(g, _2)):
-        //   invoking with (x, y) computes `bind(g, _2)(x, y)` == g(y) first,
-        //   then feeds that single result into `bind(f, _1)`, i.e. f(g(y)).
-        auto b = f::bind(f::bind(double_it, _1), f::bind(negate_it, _2));
+        {
+            auto b = f::bind(f::bind(double_it, _1), f::bind(negate_it, _2));
 
-        if (b(100, 5) != -10) {
-            throw "nested bind expression support failed";
+            if (b(100, 5) != -10) {
+                throw "nested bind expression support failed";
+            }
+
+            if (test_invocability(b, 100, 5, 2, 3, 4)) {
+                throw "nested bind expression support failed (extra arguments are not okay)";
+            }
+
+            if (test_invocability(b, 100)) {
+                throw "nested bind expression support failed (not enough arguments is not okay)";
+            }
         }
 
-        if (test_invocability(b, 100, 5, 2, 3, 4)) {
-            throw "nested bind expression support failed (extra arguments are not okay)";
+        {
+            auto b = f::bind(std::plus{}, f::bind(double_it, 5), _1);
+            if (b(10) != 20) {
+                throw "nested bind expression support failed (inner bind with more arguments than outer bind)";
+            }
+
+            if (test_invocability(b, 10, 20)) {
+                throw "nested bind expression support failed (extra arguments are not okay)";
+            }
         }
 
-        if (test_invocability(b, 100)) {
-            throw "nested bind expression support failed (not enough arguments is not okay)";
-        }
-    }
+        {
+            auto b = f::bind(std::plus{}, f::bind(double_it, _1), 5);
+            if (b(10) != 25) {
+                throw "nested bind expression support failed (outer bind with more arguments than inner bind)";
+            }
 
-    // nested std::bind support
-    {
-        auto b = f::bind(double_it, std::bind(negate_it, _1));
-
-        if (b(5) != -10) {
-            throw "nested std::bind support failed";
-        }
-
-        if (b(5, 2, 3, 4) != -10) {
-            throw "nested std::bind support failed (extra arguments are okay)";
+            if (test_invocability(b, 10, 20)) {
+                throw "nested bind expression support failed (extra arguments are not okay)";
+            }
         }
     }
 
@@ -180,7 +188,6 @@ consteval void test() {
             throw "bind expression with gaps in placeholders should not be invocable with too many arguments";
         }
     }
-
 
     // TODO: test for `noexcept`
     // TODO: test that bound arguments also get forwarded correctly
