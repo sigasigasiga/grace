@@ -51,7 +51,7 @@ jobs:
       - name: Install Clang ${{ env.CLANG_VERSION }}
         run: |
           zypper --non-interactive refresh
-          zypper --non-interactive install --allow-downgrade --no-recommends clang${{ env.CLANG_VERSION }} cmake ninja
+          zypper --non-interactive install --allow-downgrade --no-recommends clang${{ env.CLANG_VERSION }} libstdc++6-devel-gcc${{ env.GCC_VERSION }} cmake ninja
 
       - name: Configure
         env:
