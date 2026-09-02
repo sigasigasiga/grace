@@ -15,14 +15,16 @@ jobs:
   gcc-libstdcxx:
     name: gcc + libstdc++
     runs-on: ubuntu-26.04
+    container:
+      image: registry.opensuse.org/opensuse/tumbleweed:latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install GCC ${{ env.GCC_VERSION }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-${{ env.GCC_VERSION }} g++-${{ env.GCC_VERSION }} ninja-build
+          zypper --non-interactive refresh
+          zypper --non-interactive install --no-recommends gcc${{ env.GCC_VERSION }} gcc${{ env.GCC_VERSION }}-c++ cmake ninja
 
       - name: Configure
         env:
@@ -40,14 +42,16 @@ jobs:
   clang-libstdcxx:
     name: clang + libstdc++
     runs-on: ubuntu-26.04
+    container:
+      image: registry.opensuse.org/opensuse/tumbleweed:latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Clang ${{ env.CLANG_VERSION }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-${{ env.CLANG_VERSION }} ninja-build
+          zypper --non-interactive refresh
+          zypper --non-interactive install --no-recommends clang${{ env.CLANG_VERSION }} cmake ninja
 
       - name: Configure
         env:
@@ -65,14 +69,16 @@ jobs:
   clang-libcxx:
     name: clang + libc++
     runs-on: ubuntu-26.04
+    container:
+      image: registry.opensuse.org/opensuse/tumbleweed:latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Clang ${{ env.CLANG_VERSION }} and libc++
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-${{ env.CLANG_VERSION }} libc++-${{ env.CLANG_VERSION }}-dev ninja-build
+          zypper --non-interactive refresh
+          zypper --non-interactive install --no-recommends clang${{ env.CLANG_VERSION }} libc++-devel cmake ninja
 
       - name: Configure
         env:
