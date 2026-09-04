@@ -15,7 +15,8 @@ template<
     typename Ret,
     typename ...Args,
     bool Noexcept,
-    Ret (*Fn)(Args ...) noexcept(Noexcept)>
+    Ret (*Fn)(Args ...) noexcept(Noexcept)
+>
 struct lift_function<Fn>
 {
     static constexpr Ret operator()(Args ...args) noexcept(Noexcept)

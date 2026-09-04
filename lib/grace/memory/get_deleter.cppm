@@ -38,7 +38,8 @@ template<
     typename FwdPtr,
     typename Ptr = std::remove_cvref_t<FwdPtr>,
     typename Del = Ptr::deleter_type,
-    typename FwdDel = grace::type_traits::copy_cvref_t<FwdPtr &&, Del>>
+    typename FwdDel = grace::type_traits::copy_cvref_t<FwdPtr &&, Del>
+>
 requires requires { typename unique_ptr_kind<Ptr>::regular; }
 [[nodiscard]] constexpr auto get_deleter(FwdPtr &&ptr)
     noexcept(noexcept(static_cast<FwdDel>(ptr.get_deleter())))

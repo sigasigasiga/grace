@@ -11,7 +11,8 @@ export namespace grace::tuple {
 template<
     typename FwdTuple,
     typename Tuple = std::remove_reference_t<FwdTuple>,
-    std::size_t Size = std::tuple_size<Tuple>::value>
+    std::size_t Size = std::tuple_size<Tuple>::value
+>
 [[nodiscard]] constexpr std::make_index_sequence<Size> index_sequence_for_tuple() noexcept
 {
     return {};

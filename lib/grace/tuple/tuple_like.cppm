@@ -21,7 +21,8 @@ template<
     typename FwdTuple,
     typename Tuple = std::remove_reference_t<FwdTuple>,
     typename TupElement = std::tuple_element<I, Tuple>::type,
-    typename TupElementRef = grace::type_traits::copy_ref_t<ResultOfGet &&, TupElement>>
+    typename TupElementRef = grace::type_traits::copy_ref_t<ResultOfGet &&, TupElement>
+>
 concept convertible_to_tuple_element_ref = std::constructible_from<TupElementRef, ResultOfGet>;
 
 template<std::size_t I, typename FwdTuple>
