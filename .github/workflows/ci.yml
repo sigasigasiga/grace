@@ -9,7 +9,7 @@ on:
 
 env:
   GCC_VERSION: 16
-  CLANG_VERSION: 22
+  CLANG_VERSION: 23
 
 jobs:
   gcc-libstdcxx:
