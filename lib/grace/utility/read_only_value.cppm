@@ -68,7 +68,8 @@ public:
 public:
     template<
         typename Self,
-        typename FwdBase = grace::type_traits::copy_cvref_t<Self &&, std::hash<T>>>
+        typename FwdBase = grace::type_traits::copy_cvref_t<Self &&, std::hash<T>>
+    >
     [[nodiscard]] constexpr auto operator()(
         this Self &&self,
         const grace::utility::read_only_value<T>& v

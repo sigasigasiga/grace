@@ -29,7 +29,8 @@ inline constexpr auto bind_expression_argument_count_v = bind_expression_argumen
 template<
     std::size_t I,
     typename FwdBoundTuple,
-    typename ...Args>
+    typename ...Args
+>
 constexpr auto get_arg(p<0>, FwdBoundTuple &&bound, Args &&..._)
     noexcept(noexcept(get<I>(std::forward<FwdBoundTuple>(bound))))
     -> decltype(get<I>(std::forward<FwdBoundTuple>(bound)))
@@ -44,7 +45,8 @@ template<
     typename BoundTuple = std::remove_cvref_t<FwdBoundTuple>,
     typename Elem = std::tuple_element_t<I, BoundTuple>,
     int Placeholder = std::is_placeholder_v<Elem>,
-    int Idx = Placeholder - 1>
+    int Idx = Placeholder - 1
+>
 constexpr auto get_arg(p<1>, FwdBoundTuple &&bound, Args &&...args)
     noexcept
     -> decltype(std::forward<Args...[Idx]>(args...[Idx]))
@@ -79,7 +81,8 @@ template<
     typename ...Args,
     typename BoundTuple = std::remove_cvref_t<FwdBoundTuple>,
     typename Elem = std::tuple_element_t<I, BoundTuple>,
-    std::size_t ArgCount = bind_expression_argument_count<Elem>::value>
+    std::size_t ArgCount = bind_expression_argument_count<Elem>::value
+>
 constexpr auto get_arg(p<1>, FwdBoundTuple &&bound, Args &&...args)
     noexcept(noexcept(invoke_with_some_args(
         std::make_index_sequence<ArgCount>{},
@@ -155,7 +158,8 @@ public:
         typename Self,
         typename ...Args,
         typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, binder>,
-        std::size_t ArgCount = bind_expression_argument_count<binder>::value>
+        std::size_t ArgCount = bind_expression_argument_count<binder>::value
+    >
     requires (sizeof...(Args) == ArgCount)
     constexpr auto operator()(this Self &&self, Args &&...args)
         noexcept(noexcept((invoke_helper)(
@@ -189,14 +193,16 @@ binder(F, BoundTuple) -> binder<F, BoundTuple>;
 
 template<
     typename BoundArg,
-    std::size_t ArgCount = bind_expression_argument_count<BoundArg>::value>
+    std::size_t ArgCount = bind_expression_argument_count<BoundArg>::value
+>
 constexpr std::size_t count_arg(p<1>) {
     return ArgCount;
 }
 
 template<
     typename BoundArg,
-    int Placeholder = std::is_placeholder_v<BoundArg>>
+    int Placeholder = std::is_placeholder_v<BoundArg>
+>
 constexpr std::size_t count_arg(p<0>) {
     static_assert(Placeholder >= 0, "BoundArg is not a placeholder");
     return static_cast<std::size_t>(Placeholder);

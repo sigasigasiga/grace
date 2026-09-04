@@ -14,7 +14,8 @@ class consign_impl
 public:
     template<
         std::convertible_to<F> FwdF,
-        std::convertible_to<Consignment> FwdConsignment>
+        std::convertible_to<Consignment> FwdConsignment
+    >
     constexpr consign_impl(FwdF &&fn, FwdConsignment &&consignment)
         noexcept(
             std::is_nothrow_convertible_v<FwdF &&, F> &&
@@ -29,7 +30,8 @@ public:
     template<
         typename Self,
         typename ...Args,
-        typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, consign_impl>>
+        typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, consign_impl>
+    >
     constexpr auto operator()(this Self &&self, Args &&...args)
         noexcept(noexcept(std::invoke(
             grace::utility::private_base_cast<FwdSelf>(self).m_fn,
