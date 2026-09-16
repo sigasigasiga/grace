@@ -14,10 +14,10 @@ public:
         std::cout << "printing_constructor(): " << this << std::endl;
     }
 
-    printing_constructor(const printing_constructor &rhs)
+    printing_constructor(printing_constructor const &rhs)
     {
         std::cout
-            << "printing_constructor(const printing_constructor &); "
+            << "printing_constructor(printing_constructor const &); "
             << "lhs: " << this << ", "
             << "rhs: " << &rhs
             << std::endl;
@@ -32,10 +32,10 @@ public:
             << std::endl;
     }
 
-    printing_constructor &operator=(const printing_constructor &rhs)
+    printing_constructor &operator=(printing_constructor const &rhs)
     {
         std::cout
-            << "printing_constructor &operator=(const printing_constructor &); " 
+            << "printing_constructor &operator=(printing_constructor const &); " 
             << "lhs: " << this << ", "
             << "rhs: " << &rhs
             << std::endl;

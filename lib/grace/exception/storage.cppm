@@ -31,7 +31,7 @@ public:
     template<typename ExDerived>
     requires std::is_convertible_v<ExDerived *, ExBase *> &&
              (!std::is_same_v<ExDerived, ExBase>)
-    constexpr storage(const storage<ExDerived> &rhs) noexcept
+    constexpr storage(storage<ExDerived> const &rhs) noexcept
         : m_ep{rhs.get_exception_ptr()}
     {
     }

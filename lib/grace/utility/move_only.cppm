@@ -7,8 +7,8 @@ class move_only
 public:
     constexpr move_only() = default;
 
-    constexpr move_only(const move_only &) = delete;
-    constexpr move_only &operator=(const move_only &) = delete;
+    constexpr move_only(move_only const &) = delete;
+    constexpr move_only &operator=(move_only const &) = delete;
 
     constexpr move_only(move_only &&) = default;
     constexpr move_only &operator=(move_only &&) = default;

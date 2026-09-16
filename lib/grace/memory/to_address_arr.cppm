@@ -12,7 +12,7 @@ import grace.meta;
 namespace to_address_arr {
 
 template<typename Ptr>
-constexpr auto impl(const Ptr &ptr, grace::meta::overload_priority<0>)
+constexpr auto impl(Ptr const &ptr, grace::meta::overload_priority<0>)
 requires requires(std::size_t i) {
     // overload for `unique_ptr<T[]>` and `shared_ptr<T[]>`.
     // it isn't perfect by any means but i guess that's something?
@@ -24,7 +24,7 @@ requires requires(std::size_t i) {
 }
 
 template<typename Ptr>
-constexpr auto impl(const Ptr &ptr, grace::meta::overload_priority<1>)
+constexpr auto impl(Ptr const &ptr, grace::meta::overload_priority<1>)
     noexcept(noexcept(grace::memory::to_address(ptr)))
     -> decltype(grace::memory::to_address(ptr))
 {
@@ -36,7 +36,7 @@ constexpr auto impl(const Ptr &ptr, grace::meta::overload_priority<1>)
 export namespace grace::memory {
 
 // same as `grace::memory::to_address` but supports `{unique,shared}_ptr<T[]>`
-[[nodiscard]] constexpr auto to_address_arr(const auto &ptr)
+[[nodiscard]] constexpr auto to_address_arr(auto const &ptr)
     noexcept(noexcept(to_address_arr::impl(ptr, meta::overload_priority<1>{})))
     -> decltype(to_address_arr::impl(ptr, meta::overload_priority<1>{}))
 {

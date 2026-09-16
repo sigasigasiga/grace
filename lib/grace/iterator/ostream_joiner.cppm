@@ -24,7 +24,7 @@ public:
     using iterator_category = std::output_iterator_tag;
 
 public:
-    ostream_joiner(ostream_type &os, const DelimT &delim)
+    ostream_joiner(ostream_type &os, DelimT const &delim)
         : m_os{std::addressof(os)}
         , m_delim{delim}
         , m_first{true}
@@ -38,15 +38,15 @@ public:
     {
     }
 
-    ostream_joiner(const ostream_joiner &) = default;
+    ostream_joiner(ostream_joiner const &) = default;
     ostream_joiner(ostream_joiner &&) = default;
 
-    ostream_joiner &operator=(const ostream_joiner &) = default;
+    ostream_joiner &operator=(ostream_joiner const &) = default;
     ostream_joiner &operator=(ostream_joiner &&) = default;
 
 public:
     template<typename T>
-    ostream_joiner &operator=(const T &value)
+    ostream_joiner &operator=(T const &value)
     {
         if (!std::exchange(m_first, false)) {
             *m_os << m_delim;

@@ -28,7 +28,7 @@ public:
 public:
     swap_member() = default;
     explicit swap_member(int v) : value(v) { ++int_ctor_calls; }
-    swap_member(const swap_member &rhs) : value(rhs.value) { ++copy_ctor_calls; }
+    swap_member(swap_member const &rhs) : value(rhs.value) { ++copy_ctor_calls; }
     swap_member(swap_member &&rhs) : value(rhs.value) { ++move_ctor_calls; }
     ~swap_member() { ++dtor_calls; }
 
@@ -47,7 +47,7 @@ struct adl_swap {
 
     adl_swap() = default;
     explicit adl_swap(int v) : value(v) {}
-    adl_swap(const adl_swap &) = default;
+    adl_swap(adl_swap const &) = default;
     adl_swap(adl_swap &&) = default;
 
     adl_swap &operator=(auto &&rhs) {
@@ -91,7 +91,7 @@ struct constexpr_swap {
 
     constexpr constexpr_swap() = default;
     constexpr explicit constexpr_swap(int v) : value(v) {}
-    constexpr constexpr_swap(const constexpr_swap &) = default;
+    constexpr constexpr_swap(constexpr_swap const &) = default;
     constexpr constexpr_swap(constexpr_swap &&) = default;
 
     constexpr void swap(constexpr_swap &other) noexcept
@@ -198,8 +198,8 @@ int main()
     }
 
     // sanity check: the detection idiom reports true for the working cases
-    static_assert(is_default_assignable<swap_member, const swap_member &>);
-    static_assert(is_default_assignable<adl_swap, const adl_swap &>);
+    static_assert(is_default_assignable<swap_member, swap_member const &>);
+    static_assert(is_default_assignable<adl_swap, adl_swap const &>);
 
     // constrained away when the type isn't swappable
     static_assert(!is_default_assignable<not_swappable, not_swappable &&>);
@@ -208,7 +208,7 @@ int main()
     static_assert(!is_default_assignable<swap_member, std::nullptr_t>);
 
     // constrained away when `.swap` is not `noexcept`
-    static_assert(!is_default_assignable<throwing_swap, const throwing_swap &>);
+    static_assert(!is_default_assignable<throwing_swap, throwing_swap const &>);
 
     // works in a constexpr context
     {

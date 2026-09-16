@@ -37,14 +37,14 @@ public:
 public:
     using storage_base<T>::storage_base;
 
-    constexpr read_only_value(const read_only_value &) = default;
+    constexpr read_only_value(read_only_value const &) = default;
     constexpr read_only_value(read_only_value &&) = default;
 
-    constexpr read_only_value &operator=(const read_only_value &) = delete;
+    constexpr read_only_value &operator=(read_only_value const &) = delete;
     constexpr read_only_value &operator=(read_only_value &&) = delete;
 
 public:
-    [[nodiscard]] constexpr const T &get() const noexcept { return storage_base<T>::value(); }
+    [[nodiscard]] constexpr T const &get() const noexcept { return storage_base<T>::value(); }
 
     // Notes:
     // 1. I'm not sure if allowing `release` only for rvalues is a good idea, but IMO it looks nice:
@@ -72,7 +72,7 @@ public:
     >
     [[nodiscard]] constexpr auto operator()(
         this Self &&self,
-        const grace::utility::read_only_value<T>& v
+        grace::utility::read_only_value<T> const & v
     )
         noexcept(noexcept(grace::utility::private_base_cast<FwdBase>(self)(v.get())))
         -> decltype(grace::utility::private_base_cast<FwdBase>(self)(v.get()))

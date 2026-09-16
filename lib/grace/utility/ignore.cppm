@@ -5,7 +5,7 @@ export namespace grace::utility {
 class [[nodiscard]] ignore_t
 {
 public:
-    constexpr const ignore_t &operator=(auto &&) const noexcept { return *this; }
+    constexpr ignore_t const &operator=(auto &&) const noexcept { return *this; }
     constexpr void operator()(auto &&...) const noexcept {}
 };
 

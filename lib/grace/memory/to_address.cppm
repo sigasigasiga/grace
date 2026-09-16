@@ -15,7 +15,7 @@ using p = grace::meta::overload_priority<N>;
 class adl_tag {};
 
 template<typename Ptr>
-constexpr auto impl(adl_tag, const Ptr &ptr, p<0>)
+constexpr auto impl(adl_tag, Ptr const &ptr, p<0>)
     noexcept(noexcept(impl(adl_tag{}, ptr.operator->(), p<2>{})))
     -> decltype(impl(adl_tag{}, ptr.operator->(), p<2>{}))
 {
@@ -23,7 +23,7 @@ constexpr auto impl(adl_tag, const Ptr &ptr, p<0>)
 }
 
 template<typename Ptr>
-constexpr auto impl(adl_tag, const Ptr &ptr, p<1>)
+constexpr auto impl(adl_tag, Ptr const &ptr, p<1>)
     noexcept(noexcept(std::pointer_traits<Ptr>::to_address(ptr)))
     -> decltype(std::pointer_traits<Ptr>::to_address(ptr))
 {
@@ -42,7 +42,7 @@ constexpr T *impl(adl_tag, T *ptr, p<2>) noexcept
 export namespace grace::memory {
 
 // like `std::to_address` but is SFINAE-friendly
-[[nodiscard]] constexpr auto to_address(const auto &ptr)
+[[nodiscard]] constexpr auto to_address(auto const &ptr)
     noexcept(noexcept(detail::to_address::impl(detail::to_address::adl_tag{}, ptr, detail::to_address::p<2>{})))
     -> decltype(detail::to_address::impl(detail::to_address::adl_tag{}, ptr, detail::to_address::p<2>{}))
 {
