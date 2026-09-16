@@ -14,10 +14,10 @@ public:
 };
 
 template<typename From, typename To>
-class copy_const<const From, To>
+class copy_const<From const, To>
 {
 public:
-    using type = const To;
+    using type = To const;
 };
 
 template<typename From, typename To>
@@ -33,10 +33,10 @@ public:
 };
 
 template<typename From, typename To>
-class copy_volatile<volatile From, To>
+class copy_volatile<From volatile, To>
 {
 public:
-    using type = volatile To;
+    using type = To volatile;
 };
 
 template<typename From, typename To>

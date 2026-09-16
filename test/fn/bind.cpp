@@ -11,7 +11,7 @@ struct classify
 {
     constexpr int operator()(int &) const { return 1; }
     constexpr int operator()(int &&) const { return 2; }
-    constexpr int operator()(const int &) const { return 3; }
+    constexpr int operator()(int const &) const { return 3; }
 };
 
 struct multi_qual
@@ -28,7 +28,7 @@ constexpr int negate_it(int x) { return -x; }
 struct non_copyable_non_movable
 {
     non_copyable_non_movable() = default;
-    non_copyable_non_movable(const non_copyable_non_movable &) = delete;
+    non_copyable_non_movable(non_copyable_non_movable const &) = delete;
     non_copyable_non_movable(non_copyable_non_movable &&) = delete;
 };
 
@@ -71,7 +71,7 @@ consteval void test() {
         auto b = f::bind(classify{}, _1);
 
         int x = 0;
-        const int cx = 0;
+        int const cx = 0;
 
         if (b(x) != 1) {
             throw "lvalue argument forwarding failed";

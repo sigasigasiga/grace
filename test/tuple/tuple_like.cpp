@@ -28,7 +28,7 @@ struct mismatching_types
 {
 public:
     template<std::size_t I>
-    const char *get()
+    char const *get()
     {
         return "";
     }

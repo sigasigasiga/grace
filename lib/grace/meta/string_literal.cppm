@@ -18,7 +18,7 @@ public:
 public:
     constexpr string_literal() = default;
 
-    constexpr string_literal(const char (&str)[N])
+    constexpr string_literal(char const (&str)[N])
     {
         if (str[N - 1] == '\0') {
             std::ranges::copy(str, std::ranges::begin(data));

@@ -51,7 +51,7 @@ bool test_cvref()
     constexpr stored_func_invoker inv{tester{}};
     auto copy = inv;
     copy = inv;
-    static_assert(std::same_as<const decltype(copy), decltype(inv)>);
+    static_assert(std::same_as<decltype(copy) const, decltype(inv)>);
 
     stored_func_invoker<std::function<int()>> fn_inv;
     fn_inv = inv;

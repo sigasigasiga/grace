@@ -8,7 +8,7 @@ class [[nodiscard]] copy
 {
 public:
     template<typename T>
-    [[nodiscard]] static constexpr auto operator()(const T &v)
+    [[nodiscard]] static constexpr auto operator()(T const &v)
         noexcept(noexcept(utility::copy(v)))
         -> decltype(utility::copy(v))
     {
