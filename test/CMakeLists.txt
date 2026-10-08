@@ -1,5 +1,6 @@
 add_subdirectory(algorithm)
 add_subdirectory(bit)
+add_subdirectory(exception)
 add_subdirectory(fn)
 add_subdirectory(memory)
 add_subdirectory(ranges)
