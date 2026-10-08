@@ -1,7 +1,9 @@
 module;
 
+#include <concepts>
 #include <exception>
 #include <type_traits>
+#include <version>
 
 export module grace.exception:storage;
 
@@ -43,6 +45,19 @@ public:
 public:
     [[noreturn]] constexpr void throw_exception() const { std::rethrow_exception(m_ep); }
     [[nodiscard]] constexpr std::exception_ptr get_exception_ptr() const noexcept { return m_ep; }
+
+#ifdef __cpp_lib_exception_ptr_cast
+
+    template<std::same_as<ExBase> E = ExBase>
+    requires (!std::is_void_v<E>)
+    [[nodiscard]] constexpr auto get_exception() const
+        noexcept
+        -> E const &
+    {
+        return *std::exception_ptr_cast<ExBase>(m_ep);
+    }
+
+#endif // __cpp_lib_exception_ptr_cast
 
 private:
     std::exception_ptr m_ep;
