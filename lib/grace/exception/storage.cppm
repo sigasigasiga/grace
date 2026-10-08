@@ -36,6 +36,10 @@ public:
     {
     }
 
+    // disable move
+    constexpr storage(storage const &rhs) = default;
+    constexpr storage &operator=(storage const &rhs) = default;
+
 public:
     [[noreturn]] constexpr void throw_exception() const { std::rethrow_exception(m_ep); }
     [[nodiscard]] constexpr std::exception_ptr get_exception_ptr() const noexcept { return m_ep; }
