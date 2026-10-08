@@ -21,10 +21,14 @@ class [[nodiscard]] storage
         "`ExBase` must be cvref-unqualified"
     );
 
+    template<typename E>
+    consteval static bool is_exception_storage(storage<E> const volatile *) { return true; }
+    consteval static bool is_exception_storage(...) { return false; }
+
 public:
     template<typename FwdEx = ExBase, typename Ex = std::remove_cvref_t<FwdEx>>
     requires std::is_convertible_v<Ex *, ExBase *> &&
-             (!std::is_same_v<Ex, storage>)
+             (!is_exception_storage(static_cast<Ex *>(nullptr)))
     explicit constexpr storage(FwdEx &&fwd_ex) noexcept
         : m_ep{std::make_exception_ptr(std::forward<FwdEx>(fwd_ex))}
     {
