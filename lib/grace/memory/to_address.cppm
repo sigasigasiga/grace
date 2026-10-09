@@ -6,8 +6,7 @@ export module grace.memory:to_address;
 
 import grace.meta;
 
-// FIXME: remove `export` when fixed https://gcc.gnu.org/bugzilla/show_bug.cgi?id=122712
-export namespace detail::to_address {
+namespace detail::to_address {
 
 template<std::uintmax_t N>
 using p = grace::meta::overload_priority<N>;

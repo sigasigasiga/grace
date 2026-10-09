@@ -7,8 +7,7 @@ export module grace.fn.invoke:fold;
 
 import grace.tuple;
 
-// FIXME: remove `export` when fixed https://gcc.gnu.org/bugzilla/show_bug.cgi?id=122712
-export namespace detail::fold {
+namespace detail::fold {
 
 // https://stackoverflow.com/a/39996086/10961484
 class adl_tag {};
