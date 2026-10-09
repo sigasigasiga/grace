@@ -148,6 +148,10 @@ public:
         FwdF &&fn,
         FwdBoundTuple &&bound
     )
+        noexcept(
+            std::is_nothrow_constructible_v<F, FwdF &&> &&
+            std::is_nothrow_constructible_v<BoundTuple, FwdBoundTuple &&>
+        )
         : m_fn(std::forward<FwdF>(fn))
         , m_bound(std::forward<FwdBoundTuple>(bound))
     {
