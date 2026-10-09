@@ -8,7 +8,7 @@ export namespace grace::utility {
 
 // usage: `cut_rvalue_ref(std::forward<T>(val))`
 template<typename T>
-[[nodiscard]] auto cut_rvalue_ref(T &&value)
+[[nodiscard]] constexpr auto cut_rvalue_ref(T &&value)
     noexcept(noexcept(static_cast<T>(std::forward<T>(value))))
     -> decltype(static_cast<T>(std::forward<T>(value)))
 {
