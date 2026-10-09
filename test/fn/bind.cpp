@@ -24,12 +24,27 @@ struct multi_qual
 
 constexpr int double_it(int x) { return x * 2; }
 constexpr int negate_it(int x) { return -x; }
+constexpr int double_it_noexcept(int x) noexcept { return x * 2; }
+constexpr int negate_it_noexcept(int x) noexcept { return -x; }
 
 struct non_copyable_non_movable
 {
     non_copyable_non_movable() = default;
     non_copyable_non_movable(non_copyable_non_movable const &) = delete;
     non_copyable_non_movable(non_copyable_non_movable &&) = delete;
+};
+
+struct throwing_copy
+{
+    throwing_copy() = default;
+    constexpr throwing_copy(throwing_copy const &) noexcept(false) {}
+};
+
+struct throwing_copy_fn
+{
+    throwing_copy_fn() = default;
+    constexpr throwing_copy_fn(throwing_copy_fn const &) noexcept(false) {}
+    constexpr int operator()() const noexcept { return 0; }
 };
 
 template<typename F, typename ...Args>
@@ -189,8 +204,122 @@ consteval void test() {
         }
     }
 
-    // TODO: test for `noexcept`
-    // TODO: test that bound arguments also get forwarded correctly
+    // `noexcept` propagation
+    {
+        // invocation
+        {
+            auto b = f::bind(double_it_noexcept, _1);
+            static_assert(noexcept(b(1)));
+            static_assert(noexcept(std::move(b)(1)));
+
+            auto tb = f::bind(double_it, _1);
+            static_assert(!noexcept(tb(1)));
+            static_assert(!noexcept(std::move(tb)(1)));
+        }
+
+        // NTTP-stored callables
+        {
+            auto b = f::bind<double_it_noexcept>(_1);
+            static_assert(noexcept(b(1)));
+
+            auto tb = f::bind<double_it>(_1);
+            static_assert(!noexcept(tb(1)));
+        }
+
+        // nested bind expressions
+        {
+            auto b = f::bind(double_it_noexcept, f::bind(negate_it_noexcept, _1));
+            static_assert(noexcept(b(1)));
+
+            auto tb_inner = f::bind(double_it_noexcept, f::bind(negate_it, _1));
+            static_assert(!noexcept(tb_inner(1)));
+
+            auto tb_outer = f::bind(double_it, f::bind(negate_it_noexcept, _1));
+            static_assert(!noexcept(tb_outer(1)));
+        }
+
+        // bound arguments are passed by reference, so a throwing copy
+        // constructor must not affect invocation
+        {
+            auto b = f::bind([](throwing_copy const &) noexcept {}, throwing_copy{});
+            static_assert(noexcept(b()));
+        }
+
+        // `bind()` itself
+        {
+            throwing_copy tc;
+            throwing_copy_fn tcf;
+
+            static_assert(noexcept(f::bind(double_it_noexcept, 1, _1)));
+            static_assert(!noexcept(f::bind(double_it_noexcept, tc)));
+            static_assert(!noexcept(f::bind(tcf)));
+            static_assert(noexcept(f::bind(std::ref(tcf))));
+            static_assert(noexcept(f::bind(double_it_noexcept, std::ref(tc))));
+        }
+    }
+
+    // bound arguments forwarding
+    {
+        {
+            // bound arguments are forwarded according to the binder's own
+            // value category
+            auto b = f::bind(classify{}, 0);
+
+            if (b() != 1) {
+                throw "bound argument lvalue forwarding failed";
+            }
+            if (std::as_const(b)() != 3) {
+                throw "bound argument const lvalue forwarding failed";
+            }
+            if (std::move(b)() != 2) {
+                throw "bound argument rvalue forwarding failed";
+            }
+            if (std::move(std::as_const(b))() != 3) {
+                throw "bound argument const rvalue forwarding failed";
+            }
+        }
+
+        {
+            // `std::reference_wrapper`s are unwrapped and always passed as
+            // lvalue references
+            int x = 0;
+            auto b = f::bind(classify{}, std::ref(x));
+
+            if (b() != 1) {
+                throw "reference_wrapper bound argument lvalue forwarding failed";
+            }
+            if (std::as_const(b)() != 1) {
+                throw "reference_wrapper bound argument const lvalue forwarding failed";
+            }
+            if (std::move(b)() != 1) {
+                throw "reference_wrapper bound argument rvalue forwarding failed";
+            }
+
+            auto cb = f::bind(classify{}, std::cref(x));
+            if (std::move(cb)() != 3) {
+                throw "reference_wrapper (const) bound argument forwarding failed";
+            }
+        }
+
+        {
+            // nested bind expressions are invoked according to the outer
+            // binder's value category
+            auto b = f::bind([](int x) { return x; }, f::bind(multi_qual{}));
+
+            if (b() != 1) {
+                throw "nested bind expression lvalue forwarding failed";
+            }
+            if (std::as_const(b)() != 2) {
+                throw "nested bind expression const lvalue forwarding failed";
+            }
+            if (std::move(b)() != 3) {
+                throw "nested bind expression rvalue forwarding failed";
+            }
+            if (std::move(std::as_const(b))() != 4) {
+                throw "nested bind expression const rvalue forwarding failed";
+            }
+        }
+    }
 }
 
 } // anonymous namespace
