@@ -2,6 +2,7 @@ module;
 
 #include <algorithm>
 #include <concepts>
+#include <limits>
 
 export module grace.algorithm:clamp_to;
 
