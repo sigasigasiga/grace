@@ -51,7 +51,11 @@ public:
     //    this way it'd be easier to notice that the value would be moved-from after the operation.
     //    However, it's not consistent with STL -- `unique_ptr::release` works for both `&` and `&&`
     // 2. `T &&` is not returned, as the underlying value may be modified using the reference
-    [[nodiscard]] constexpr T release() && noexcept { return std::move(*this).value(); }
+    [[nodiscard]] constexpr T release() &&
+        noexcept(std::is_nothrow_move_constructible_v<T>)
+    {
+        return std::move(*this).value();
+    }
 };
 
 template<typename T>
