@@ -46,18 +46,18 @@ public:
         (!std::is_convertible_v<storage_base<U> const &, T>) &&
         (!std::is_convertible_v<storage_base<U> &&, T>) &&
         (!std::is_convertible_v<storage_base<U> const &&, T>)
-    explicit(!std::is_convertible_v<T, U const &>)
+    explicit(!std::is_convertible_v<U const &, T>)
     constexpr
     storage_base(storage_base<U> const &value)
-        noexcept(std::is_nothrow_copy_constructible_v<T>)
-        : m_value(value.get())
+        noexcept(std::is_nothrow_constructible_v<T, U const &>)
+        : m_value(value.value())
     {
     }
 
     // (5)
     template<typename U>
     requires
-        std::is_constructible_v<T, U const &> &&
+        std::is_constructible_v<T, U &&> &&
         (!std::is_constructible_v<T, storage_base<U>&>) &&
         (!std::is_constructible_v<T, storage_base<U> const &>) &&
         (!std::is_constructible_v<T, storage_base<U> &&>) &&
@@ -66,11 +66,11 @@ public:
         (!std::is_convertible_v<storage_base<U> const &, T>) &&
         (!std::is_convertible_v<storage_base<U> &&, T>) &&
         (!std::is_convertible_v<storage_base<U> const &&, T>)
-    explicit(!std::is_convertible_v<T, U &&>)
+    explicit(!std::is_convertible_v<U &&, T>)
     constexpr
     storage_base(storage_base<U> &&value)
-        noexcept(std::is_nothrow_move_constructible_v<T>)
-        : m_value(std::move(value).get())
+        noexcept(std::is_nothrow_constructible_v<T, U &&>)
+        : m_value(std::move(value).value())
     {
     }
 
