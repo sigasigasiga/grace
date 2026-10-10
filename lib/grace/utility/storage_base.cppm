@@ -133,7 +133,7 @@ public:
         // 2. `(!std::is_scalar_v<T> || !std::same_as<std::decay_t<U>, T>)`
         //    TODO: I don't get what it is for
     constexpr storage_base &operator=(U &&value)
-        noexcept(std::is_nothrow_assignable_v<T, U>) // strengthened
+        noexcept(std::is_nothrow_assignable_v<T &, U>) // strengthened
     {
         this->m_value = std::forward<U>(value);
         return *this;
@@ -152,7 +152,7 @@ public:
         (!std::is_assignable_v<T &, storage_base<U> const &&>) &&
         std::is_assignable_v<T &, U const &>
     constexpr storage_base &operator=(storage_base<U> const &rhs)
-        noexcept(std::is_nothrow_assignable_v<T, U const &>) // strengthened
+        noexcept(std::is_nothrow_assignable_v<T &, U const &>) // strengthened
     {
         this->m_value = rhs.value();
         return *this;
@@ -171,7 +171,7 @@ public:
         (!std::is_assignable_v<T &, storage_base<U> const &&>) &&
         std::is_assignable_v<T &, U &&>
     constexpr storage_base &operator=(storage_base<U> &&rhs)
-        noexcept(std::is_nothrow_assignable_v<T, U &&>) // strengthened
+        noexcept(std::is_nothrow_assignable_v<T &, U &&>) // strengthened
     {
         this->m_value = std::move(rhs).value();
         return *this;
