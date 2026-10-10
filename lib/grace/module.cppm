@@ -1,7 +1,6 @@
 export module grace;
 
 export import grace.bit;
-export import grace.compat;
 export import grace.concepts;
 export import grace.exception;
 export import grace.fn;
