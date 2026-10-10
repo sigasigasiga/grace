@@ -64,6 +64,9 @@ export namespace grace::utility {
 // ```
 // my_class &operator=(T &&rhs) { return default_assign(*this, std::forward<T>(rhs)); }
 // ```
+//
+// Note that if ADL call to `swap` resolves to something other that `swap(To &, To&)`,
+// the behavior is undefined.
 template<typename To, typename FwdFrom>
 constexpr auto default_assign(To &to, FwdFrom &&from)
     noexcept(noexcept(default_assign::impl(to, std::forward<FwdFrom>(from))))
