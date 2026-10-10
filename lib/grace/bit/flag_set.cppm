@@ -16,9 +16,9 @@ public:
     using value_type = std::underlying_type_t<T>;
 
 public:
-    constexpr flag_set() = default;
-    /* implicit */ constexpr flag_set(T value) noexcept : m_value{std::to_underlying(value)} {}
-    explicit constexpr flag_set(value_type value) noexcept : m_value{value} {}
+    constexpr flag_set() noexcept : m_value(0) {}
+    /* implicit */ constexpr flag_set(T value) noexcept : m_value(std::to_underlying(value)) {}
+    explicit constexpr flag_set(value_type value) noexcept : m_value(value) {}
 
 public:
     constexpr flag_set &operator&=(flag_set rhs) noexcept
