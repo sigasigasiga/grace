@@ -32,3 +32,5 @@ target_link_libraries(
 
     grace.type_traits
 )
+
+target_compile_features(grace.utility PUBLIC cxx_std_26)
