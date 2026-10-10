@@ -10,5 +10,5 @@ int main()
     static_assert(b[3] == 0);
     static_assert(b[2] == 1);
     static_assert(b[1] == 0);
-    static_assert(b[1] == 0);
+    static_assert(b[0] == 0);
 }
