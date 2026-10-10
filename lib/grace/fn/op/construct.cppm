@@ -13,15 +13,14 @@ requires std::is_object_v<T>
 class [[nodiscard]] construct
 {
 public:
-    // cannot `return T(args...)`, as it invokes a C-style cast
-    // instead of calling a constructor if there's only one arg
     template<typename... Args>
     [[nodiscard]] static constexpr T operator()(Args &&...args)
         noexcept(std::is_nothrow_constructible_v<T, Args &&...>)
+        // Guard against a one-argument case where `T(arg)` could invoke a C-style cast
+        // https://cplusplus.github.io/LWG/issue3528
         requires std::constructible_from<T, Args &&...>
     {
-        T ret(std::forward<Args>(args)...);
-        return ret;
+        return T(std::forward<Args>(args)...);
     }
 };
 
