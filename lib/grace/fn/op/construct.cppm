@@ -1,5 +1,6 @@
 module;
 
+#include <concepts>
 #include <type_traits>
 #include <utility>
 
@@ -11,15 +12,19 @@ template<typename T, bool UseRoundBrackets = true>
 class [[nodiscard]] construct
 {
 public:
+    // cannot `return T(args...)`, as it invokes a C-style cast
+    // instead of calling a constructor if there's only one arg
     template<typename... Args>
-    [[nodiscard]] static constexpr auto operator()(Args &&...args)
-        noexcept(noexcept(T(std::forward<Args>(args)...)))
-        -> decltype(T(std::forward<Args>(args)...))
+    [[nodiscard]] static constexpr T operator()(Args &&...args)
+        noexcept(std::is_nothrow_constructible_v<T, Args &&...>)
+        requires std::constructible_from<T, Args &&...>
     {
-        return T(std::forward<Args>(args)...);
+        T ret(std::forward<Args>(args)...);
+        return ret;
     }
 };
 
+// FIXME: that should be a different class rather than a specialization imo
 template<typename T>
 class [[nodiscard]] construct<T, false>
 {
@@ -31,14 +36,6 @@ public:
     {
         return T{std::forward<Args>(args)...};
     }
-};
-
-template<typename T>
-requires std::is_void_v<T>
-class [[nodiscard]] construct<T, true>
-{
-public:
-    static constexpr void operator()() noexcept {}
 };
 
 } // namespace grace::fn::op
