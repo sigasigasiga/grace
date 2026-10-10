@@ -10,13 +10,13 @@ target_sources(
 
     bind.cppm
     bind_expression.cppm
-    compose.cppm
     consign.cppm
     lazy_eval.cppm
     lift_function.cppm
     lift_invocable.cppm
     operators.cppm
     overload.cppm
+    pipe.cppm
     return_value.cppm
     sequence.cppm
     stored_func_invoker.cppm
