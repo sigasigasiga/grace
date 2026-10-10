@@ -13,12 +13,13 @@ namespace to_address_arr {
 
 template<typename Ptr>
 constexpr auto impl(Ptr const &ptr, grace::meta::overload_priority<0>)
-requires requires(std::size_t i) {
-    // overload for `unique_ptr<T[]>` and `shared_ptr<T[]>`.
-    // it isn't perfect by any means but i guess that's something?
-    { ptr[i] } -> std::same_as<typename std::pointer_traits<Ptr>::element_type &>;
-    { ptr.get() } -> std::same_as<typename std::pointer_traits<Ptr>::element_type *>;
-}
+    noexcept(noexcept(ptr.get()))
+    requires requires(std::size_t i) {
+        // overload for `unique_ptr<T[]>` and `shared_ptr<T[]>`.
+        // it isn't perfect by any means but i guess that's something?
+        { ptr[i] } -> std::same_as<typename std::pointer_traits<Ptr>::element_type &>;
+        { ptr.get() } -> std::same_as<typename std::pointer_traits<Ptr>::element_type *>;
+    }
 {
     return ptr.get();
 }
