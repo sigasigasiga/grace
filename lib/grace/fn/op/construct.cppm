@@ -9,6 +9,7 @@ export module grace.fn.op:construct;
 export namespace grace::fn::op {
 
 template<typename T>
+requires std::is_object_v<T>
 class [[nodiscard]] construct
 {
 public:
@@ -25,6 +26,7 @@ public:
 };
 
 template<typename T>
+requires std::is_object_v<T>
 class [[nodiscard]] brace_construct
 {
 public:
