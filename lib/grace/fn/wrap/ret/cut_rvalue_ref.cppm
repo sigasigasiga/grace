@@ -13,10 +13,10 @@ export namespace grace::fn::wrap::ret {
 // although i think it should've been replacing `T &&` with `T` automatically
 template<typename F>
 [[nodiscard]] constexpr auto cut_rvalue_ref(F &&func)
-    noexcept(noexcept(bind::compose(std::forward<F>(func), op::cut_rvalue_ref())))
-    -> decltype(bind::compose(std::forward<F>(func), op::cut_rvalue_ref()))
+    noexcept(noexcept(bind::pipe(std::forward<F>(func), op::cut_rvalue_ref())))
+    -> decltype(bind::pipe(std::forward<F>(func), op::cut_rvalue_ref()))
 {
-    return bind::compose(std::forward<F>(func), op::cut_rvalue_ref());
+    return bind::pipe(std::forward<F>(func), op::cut_rvalue_ref());
 }
 
 } // namespace grace::fn::wrap::ret

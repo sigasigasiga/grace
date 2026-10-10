@@ -11,10 +11,10 @@ export namespace grace::fn::wrap::ret {
 
 template<typename F>
 [[nodiscard]] constexpr auto objectify(F &&func)
-    noexcept(noexcept(bind::compose(std::forward<F>(func), op::objectify())))
-    -> decltype(bind::compose(std::forward<F>(func), op::objectify()))
+    noexcept(noexcept(bind::pipe(std::forward<F>(func), op::objectify())))
+    -> decltype(bind::pipe(std::forward<F>(func), op::objectify()))
 {
-    return bind::compose(std::forward<F>(func), op::objectify());
+    return bind::pipe(std::forward<F>(func), op::objectify());
 }
 
 } // namespace grace::fn::wrap::ret
