@@ -17,7 +17,7 @@ public:
 
 private:
     template<typename Self, typename USelf = type_traits::copy_cvref_t<Self &&, lazy_eval>>
-    static auto impl(Self &&self)
+    constexpr static auto impl(Self &&self)
         noexcept(noexcept(std::invoke(utility::private_base_cast<USelf>(self).value())))
         -> decltype(std::invoke(utility::private_base_cast<USelf>(self).value()))
     {
