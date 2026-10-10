@@ -1,4 +1,3 @@
-add_subdirectory(algorithm)
 add_subdirectory(bit)
 add_subdirectory(exception)
 add_subdirectory(fn)
