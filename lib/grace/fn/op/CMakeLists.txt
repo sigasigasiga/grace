@@ -28,7 +28,6 @@ target_sources(
 target_link_libraries(
     grace.fn.op
 
-    grace.fn.invoke
     grace.tuple
     grace.utility
 )
