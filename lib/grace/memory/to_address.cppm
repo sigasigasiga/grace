@@ -6,6 +6,8 @@ export module grace.memory:to_address;
 
 import grace.meta;
 
+namespace grace::memory {
+
 namespace detail::to_address {
 
 template<std::uintmax_t N>
@@ -38,10 +40,8 @@ constexpr T *impl(adl_tag, T *ptr, p<2>) noexcept
 
 } // namespace detail::to_address
 
-export namespace grace::memory {
-
 // like `std::to_address` but is SFINAE-friendly
-[[nodiscard]] constexpr auto to_address(auto const &ptr)
+export [[nodiscard]] constexpr auto to_address(auto const &ptr)
     noexcept(noexcept(detail::to_address::impl(detail::to_address::adl_tag{}, ptr, detail::to_address::p<2>{})))
     -> decltype(detail::to_address::impl(detail::to_address::adl_tag{}, ptr, detail::to_address::p<2>{}))
 {

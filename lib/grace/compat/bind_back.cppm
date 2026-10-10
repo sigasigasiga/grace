@@ -6,7 +6,9 @@ module;
 
 export module grace.compat:bind_back;
 
-namespace bind_back {
+namespace grace::compat {
+
+namespace detail::bind_back {
 
 #ifdef __cpp_lib_bind_back
 
@@ -55,15 +57,12 @@ constexpr auto my_bind_back(F &&fn, Args &&...args)
 
 #endif // __cpp_lib_bind_back
 
-} // namespace bind_back
+} // namespace detail::bind_back
 
-
-export namespace grace::compat {
-
-template<typename... Args>
+export template<typename... Args>
 constexpr auto bind_back(Args &&...args)
 {
-    return bind_back::my_bind_back(std::forward<Args>(args)...);
+    return detail::bind_back::my_bind_back(std::forward<Args>(args)...);
 }
 
 } // namespace grace::compat

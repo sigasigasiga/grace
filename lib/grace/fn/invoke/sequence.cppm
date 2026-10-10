@@ -6,7 +6,9 @@ export module grace.fn.invoke:sequence;
 
 import grace.tuple;
 
-namespace sequence {
+namespace grace::fn::invoke {
+
+namespace detail::sequence {
 
 template<typename FnTuple, std::size_t... Is, typename... Args>
 constexpr auto impl(std::index_sequence<Is...>, FnTuple &&fn_tuple, Args const &...args)
@@ -16,25 +18,23 @@ constexpr auto impl(std::index_sequence<Is...>, FnTuple &&fn_tuple, Args const &
     return (..., void(std::invoke(get<Is>(std::forward<FnTuple>(fn_tuple)), args...)));
 }
 
-} // namespace sequence
-
-export namespace grace::fn::invoke {
+} // namespace detail::sequence
 
 // TODO: I'm not sure if allowing mutable references is a good idea, so it is `const` for now
-template<typename FnTuple, typename... Args>
+export template<typename FnTuple, typename... Args>
 constexpr auto sequence(FnTuple &&fn_tuple, Args const &...args)
-    noexcept(noexcept(sequence::impl(
+    noexcept(noexcept(detail::sequence::impl(
         tuple::index_sequence_for_tuple<FnTuple>(),
         std::forward<FnTuple>(fn_tuple),
         args...
     )))
-    -> decltype(sequence::impl(
+    -> decltype(detail::sequence::impl(
         tuple::index_sequence_for_tuple<FnTuple>(),
         std::forward<FnTuple>(fn_tuple),
         args...
     ))
 {
-    return sequence::impl(
+    return detail::sequence::impl(
         tuple::index_sequence_for_tuple<FnTuple>(),
         std::forward<FnTuple>(fn_tuple),
         args...

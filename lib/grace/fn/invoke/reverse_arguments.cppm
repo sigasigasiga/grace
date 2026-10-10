@@ -5,7 +5,9 @@ module;
 
 export module grace.fn.invoke:reverse_arguments;
 
-namespace reverse_arguments {
+namespace grace::fn::invoke {
+
+namespace detail::reverse_arguments {
 
 template<typename F, std::size_t... Is, typename... Args, std::size_t Last = sizeof...(Is) - 1>
 constexpr auto impl(std::index_sequence<Is...>, F &&fn, Args &&...args)
@@ -24,24 +26,22 @@ constexpr auto impl(std::index_sequence<Is...>, F &&fn, Args &&...args)
     );
 }
 
-} // namespace revernse_arguments
+} // namespace detail::reverse_arguments
 
-export namespace grace::fn::invoke {
-
-template<typename F, typename... Args>
+export template<typename F, typename... Args>
 constexpr auto reverse_arguments(F &&fn, Args &&...args)
-    noexcept(noexcept(reverse_arguments::impl(
+    noexcept(noexcept(detail::reverse_arguments::impl(
         std::index_sequence_for<Args...>{},
         std::forward<F>(fn),
         std::forward<Args>(args)...
     )))
-    -> decltype(reverse_arguments::impl(
+    -> decltype(detail::reverse_arguments::impl(
         std::index_sequence_for<Args...>{},
         std::forward<F>(fn),
         std::forward<Args>(args)...
     ))
 {
-    return reverse_arguments::impl(
+    return detail::reverse_arguments::impl(
         std::index_sequence_for<Args...>{},
         std::forward<F>(fn),
         std::forward<Args>(args)...
