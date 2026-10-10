@@ -16,3 +16,5 @@ target_sources(
 
     module.cppm
 )
+
+target_compile_features(grace.meta PUBLIC cxx_std_26)

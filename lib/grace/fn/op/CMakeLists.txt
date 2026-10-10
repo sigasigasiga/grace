@@ -32,3 +32,5 @@ target_link_libraries(
     grace.tuple
     grace.utility
 )
+
+target_compile_features(grace.fn.op PUBLIC cxx_std_26)
