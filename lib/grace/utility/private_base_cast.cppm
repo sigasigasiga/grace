@@ -13,11 +13,12 @@ export namespace grace::utility {
 // 2. It doesn't differentiate between xvalues and prvalues like the builtin casts
 //    (e.g. `const_cast<int &&>(std::move(x))` works, but `const_cast<int &&>(3)` doesn't)
 template<typename CvRefTo, typename CvFrom, typename CvTo = std::remove_reference_t<CvRefTo>>
-requires std::is_reference_v<CvRefTo> &&
-         std::is_base_of_v<CvTo, CvFrom> &&
-         (!std::is_const_v<CvFrom> || std::is_const_v<CvTo>) &&
-         (!std::is_volatile_v<CvFrom> || std::is_volatile_v<CvTo>)
 [[nodiscard]] constexpr CvRefTo private_base_cast(CvFrom &from) noexcept
+    requires std::is_reference_v<CvRefTo> &&
+             std::is_base_of_v<CvTo, CvFrom> &&
+             (!std::is_const_v<CvFrom> || std::is_const_v<CvTo>) &&
+             (!std::is_volatile_v<CvFrom> || std::is_volatile_v<CvTo>) &&
+             requires { (CvRefTo)from; } // check for ambigous base class
 {
     return (CvRefTo)from;
 }
