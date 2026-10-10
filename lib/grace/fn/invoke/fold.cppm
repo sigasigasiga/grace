@@ -7,6 +7,8 @@ export module grace.fn.invoke:fold;
 
 import grace.tuple;
 
+namespace grace::fn::invoke {
+
 namespace detail::fold {
 
 // https://stackoverflow.com/a/39996086/10961484
@@ -50,9 +52,7 @@ constexpr auto impl(
 
 } // namespace detail::fold
 
-export namespace grace::fn::invoke {
-
-template<typename FnTuple, typename ...Args>
+export template<typename FnTuple, typename ...Args>
 constexpr auto fold(FnTuple &&tup, Args &&...args)
     noexcept(noexcept(detail::fold::impl(
         detail::fold::adl_tag{},

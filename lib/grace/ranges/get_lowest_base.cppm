@@ -7,9 +7,9 @@ export module grace.ranges:get_lowest_base;
 import grace.meta;
 import grace.utility;
 
-namespace get_lowest_base {
+namespace grace::ranges {
 
-using namespace grace;
+namespace detail::get_lowest_base {
 
 class adl_tag{};
 
@@ -29,16 +29,14 @@ template<typename Range>
     return impl(adl_tag{}, std::forward<Range>(range).base(), meta::overload_priority<1>{});
 }
 
-} // namespace get_lowest_base
+} // namespace detail::get_lowest_base
 
-export namespace grace::ranges {
-
-template<std::ranges::range Range>
+export template<std::ranges::range Range>
 [[nodiscard]] constexpr auto get_lowest_base(Range &&range)
-    noexcept(noexcept(get_lowest_base::impl(get_lowest_base::adl_tag{}, std::forward<Range>(range), meta::overload_priority<1>{})))
-    -> decltype(get_lowest_base::impl(get_lowest_base::adl_tag{}, std::forward<Range>(range), meta::overload_priority<1>{}))
+    noexcept(noexcept(detail::get_lowest_base::impl(detail::get_lowest_base::adl_tag{}, std::forward<Range>(range), meta::overload_priority<1>{})))
+    -> decltype(detail::get_lowest_base::impl(detail::get_lowest_base::adl_tag{}, std::forward<Range>(range), meta::overload_priority<1>{}))
 {
-    return get_lowest_base::impl(get_lowest_base::adl_tag{}, std::forward<Range>(range), meta::overload_priority<1>{});
+    return detail::get_lowest_base::impl(detail::get_lowest_base::adl_tag{}, std::forward<Range>(range), meta::overload_priority<1>{});
 }
 
 } // namespace grace::ranges
