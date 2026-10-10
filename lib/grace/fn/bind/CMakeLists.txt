@@ -27,7 +27,6 @@ target_sources(
 target_link_libraries(
     grace.fn.bind
 
-    grace.compat
     grace.fn.invoke
     grace.fn.op
     grace.meta
