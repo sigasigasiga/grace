@@ -9,7 +9,7 @@ project(
 )
 
 # Generate a .gitignore in the build directory to ignore all its contents
-if (NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+if (PROJECT_IS_TOP_LEVEL AND NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     file(WRITE "${CMAKE_BINARY_DIR}/.gitignore" "*\n")
 endif()
 
