@@ -8,7 +8,7 @@ export module grace.fn.op:construct;
 
 export namespace grace::fn::op {
 
-template<typename T, bool UseRoundBrackets = true>
+template<typename T>
 class [[nodiscard]] construct
 {
 public:
@@ -24,9 +24,8 @@ public:
     }
 };
 
-// FIXME: that should be a different class rather than a specialization imo
 template<typename T>
-class [[nodiscard]] construct<T, false>
+class [[nodiscard]] brace_construct
 {
 public:
     template<typename... Args>
