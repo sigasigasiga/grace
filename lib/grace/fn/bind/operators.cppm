@@ -10,7 +10,7 @@ import grace.fn.op;
 
 import :bind;
 
-namespace grace::fn::bind {
+export namespace grace::fn::bind {
 
 template<typename T>
 [[nodiscard]] constexpr auto equal_to(T &&value)
