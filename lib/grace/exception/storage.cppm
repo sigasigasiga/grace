@@ -26,10 +26,14 @@ class [[nodiscard]] storage
     consteval static bool is_exception_storage(...) { return false; }
 
 public:
+    // FIXME: `std::make_exception_ptr` may return a pointer to `std::bad_alloc` or `std::bad_exception`
+    // gotta fix it by querying the exception stored inside the pointer with `std::exception_ptr_cast`
+    // when it is available in libc++
     template<typename FwdEx = ExBase, typename Ex = std::remove_cvref_t<FwdEx>>
     requires std::is_convertible_v<Ex *, ExBase *> &&
              (!is_exception_storage(static_cast<Ex *>(nullptr)))
-    explicit constexpr storage(FwdEx &&fwd_ex) noexcept
+    explicit constexpr storage(FwdEx &&fwd_ex)
+        noexcept(std::is_nothrow_constructible_v<Ex, FwdEx &&>)
         : m_ep{std::make_exception_ptr(std::forward<FwdEx>(fwd_ex))}
     {
     }
