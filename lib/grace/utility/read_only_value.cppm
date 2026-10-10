@@ -1,5 +1,6 @@
 module;
 
+#include <compare>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -53,6 +54,60 @@ public:
     // 2. `T &&` is not returned, as the underlying value may be modified using the reference
     [[nodiscard]] constexpr T release() && noexcept { return std::move(*this).value(); }
 };
+
+} // namespace grace::utility
+
+namespace grace::utility::detail {
+
+template<typename T>
+constexpr bool is_read_only_value_v = false;
+
+template<typename T>
+constexpr bool is_read_only_value_v<read_only_value<T>> = true;
+
+// Only one level is unwrapped, so `read_only_value<read_only_value<T>>` is compared as `read_only_value<T>`
+template<typename T>
+[[nodiscard]] constexpr T const &unwrap_read_only_value(T const &v) noexcept
+{
+    return v;
+}
+
+template<typename T>
+[[nodiscard]] constexpr T const &unwrap_read_only_value(read_only_value<T> const &v) noexcept
+{
+    return v.get();
+}
+
+} // namespace grace::utility::detail
+
+export namespace grace::utility {
+
+// Covers `read_only_value<T> @ read_only_value<U>`, `read_only_value<T> @ U` and `U @ read_only_value<T>`.
+// The remaining operators are provided by the rewritten candidates.
+//
+// `bool` is returned, as the rewritten `!=` requires `==` to return `bool`
+template<typename L, typename R>
+requires
+    (detail::is_read_only_value_v<L> || detail::is_read_only_value_v<R>) &&
+    requires (L const &l, R const &r) {
+        static_cast<bool>(detail::unwrap_read_only_value(l) == detail::unwrap_read_only_value(r));
+    }
+[[nodiscard]] constexpr bool operator==(L const &lhs, R const &rhs)
+    noexcept(noexcept(
+        static_cast<bool>(detail::unwrap_read_only_value(lhs) == detail::unwrap_read_only_value(rhs))
+    ))
+{
+    return static_cast<bool>(detail::unwrap_read_only_value(lhs) == detail::unwrap_read_only_value(rhs));
+}
+
+template<typename L, typename R>
+requires (detail::is_read_only_value_v<L> || detail::is_read_only_value_v<R>)
+[[nodiscard]] constexpr auto operator<=>(L const &lhs, R const &rhs)
+    noexcept(noexcept(detail::unwrap_read_only_value(lhs) <=> detail::unwrap_read_only_value(rhs)))
+    -> decltype(detail::unwrap_read_only_value(lhs) <=> detail::unwrap_read_only_value(rhs))
+{
+    return detail::unwrap_read_only_value(lhs) <=> detail::unwrap_read_only_value(rhs);
+}
 
 template<typename T>
 read_only_value(T) -> read_only_value<T>;
