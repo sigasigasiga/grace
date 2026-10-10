@@ -77,12 +77,18 @@ int main()
     static_assert(((set{flags::a} | flags::b) & flags::c) == flags::none);
     static_assert((~set{flags::a}).value() == 0b1111'1110);
     static_assert(~~set{flags::a} == flags::a);
+    static_assert(((set{flags::a} | flags::b) ^ flags::b) == flags::a);
+    static_assert(((set{flags::a} | flags::b) ^ flags::c).value() == 0b111);
+    static_assert((flags::a ^ set{flags::a}) == flags::none);
+    static_assert((set{flags::a} ^ ~set{flags::a}).value() == 0b1111'1111);
 
     static_assert(noexcept(set{} | set{}));
     static_assert(noexcept(set{} & set{}));
+    static_assert(noexcept(set{} ^ set{}));
     static_assert(noexcept(~set{}));
     static_assert(std::same_as<decltype(set{} | flags::a), set>);
     static_assert(std::same_as<decltype(set{} & flags::a), set>);
+    static_assert(std::same_as<decltype(set{} ^ flags::a), set>);
     static_assert(std::same_as<decltype(~set{}), set>);
 
     // compound assignment
@@ -101,11 +107,29 @@ int main()
         }
 
         s &= ~set{flags::c};
+        if (s != flags::none) {
+            return false;
+        }
+
+        // toggling twice restores the original value
+        s ^= flags::b;
+        if (s != flags::b) {
+            return false;
+        }
+
+        s ^= set{flags::a} | flags::b;
+        if (s != flags::a) {
+            return false;
+        }
+
+        s ^= flags::a;
         return s == flags::none;
     }());
 
     static_assert(std::same_as<decltype(std::declval<set &>() |= flags::a), set &>);
     static_assert(std::same_as<decltype(std::declval<set &>() &= flags::a), set &>);
+    static_assert(std::same_as<decltype(std::declval<set &>() ^= flags::a), set &>);
+    static_assert(noexcept(std::declval<set &>() ^= flags::a));
 
     // equality
     static_assert(set{flags::a} == set{flags::a});
@@ -117,6 +141,7 @@ int main()
     // unscoped enums with a non-`uint8_t` underlying type
     static_assert((flag_set<unscoped_flags>{unscoped_a} | unscoped_b).value() == 0b11u);
     static_assert((~flag_set<unscoped_flags>{unscoped_a}).value() == ~1u);
+    static_assert((~flag_set<unscoped_flags>{unscoped_a} ^ unscoped_b).value() == ~0b11u);
 
     // hash is the hash of the underlying value
     constexpr std::hash<set> h;
