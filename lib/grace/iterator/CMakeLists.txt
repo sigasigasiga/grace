@@ -22,3 +22,5 @@ target_link_libraries(
     grace.meta
     grace.utility
 )
+
+target_compile_features(grace.iterator PUBLIC cxx_std_26)

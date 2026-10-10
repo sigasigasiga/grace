@@ -26,3 +26,6 @@ target_link_libraries(
     grace.fn.op
     grace.fn.wrap
 )
+
+
+target_compile_features(grace.fn PUBLIC cxx_std_26)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.30)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -13,7 +13,6 @@ if (PROJECT_IS_TOP_LEVEL AND NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     file(WRITE "${CMAKE_BINARY_DIR}/.gitignore" "*\n")
 endif()
 
-set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
