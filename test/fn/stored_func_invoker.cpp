@@ -1,4 +1,5 @@
 #include <concepts>
+#include <cstdlib>
 #include <functional>
 #include <utility>
 
@@ -48,10 +49,10 @@ bool test_cvref()
 
     using namespace grace::fn::bind;
 
-    constexpr stored_func_invoker inv{tester{}};
+    stored_func_invoker inv{tester{}};
     auto copy = inv;
     copy = inv;
-    static_assert(std::same_as<decltype(copy) const, decltype(inv)>);
+    static_assert(std::same_as<decltype(copy), decltype(inv)>);
 
     stored_func_invoker<std::function<int()>> fn_inv;
     fn_inv = inv;
@@ -75,6 +76,10 @@ bool test_cvref()
 
 int main()
 {
-    std::ignore = test_storage_assignment;
-    return test_cvref();
+    test_storage_assignment();
+    if (test_cvref()) {
+        return EXIT_SUCCESS;
+    } else {
+        return EXIT_FAILURE;
+    }
 }
