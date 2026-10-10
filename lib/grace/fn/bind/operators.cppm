@@ -5,7 +5,6 @@ module;
 
 export module grace.fn.bind:operators;
 
-import grace.compat;
 import grace.fn.op;
 
 import :bind;
