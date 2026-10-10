@@ -10,7 +10,7 @@ export module grace.exception:storage;
 export namespace grace::exception {
 
 // like `std::exception_ptr` but:
-// 1. has value semantics
+// 1. has reference semantics
 // 2. cannot be null
 // 3. stores exceptions that are convertible to `ExBase` by pointer (`ExBase` may be `void`)
 template<typename ExBase>
