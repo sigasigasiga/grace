@@ -10,13 +10,13 @@ target_sources(
 
     bind.cppm
     bind_expression.cppm
-    compose.cppm
     consign.cppm
     lazy_eval.cppm
     lift_function.cppm
     lift_invocable.cppm
     operators.cppm
     overload.cppm
+    pipe.cppm
     return_value.cppm
     sequence.cppm
     stored_func_invoker.cppm
@@ -27,10 +27,11 @@ target_sources(
 target_link_libraries(
     grace.fn.bind
 
-    grace.compat
     grace.fn.invoke
     grace.fn.op
     grace.meta
     grace.type_traits
     grace.utility
 )
+
+target_compile_features(grace.fn.bind PUBLIC cxx_std_26)

@@ -28,7 +28,8 @@ target_sources(
 target_link_libraries(
     grace.fn.op
 
-    grace.fn.invoke
     grace.tuple
     grace.utility
 )
+
+target_compile_features(grace.fn.op PUBLIC cxx_std_26)

@@ -14,3 +14,5 @@ target_sources(
 
     module.cppm
 )
+
+target_compile_features(grace.toy PUBLIC cxx_std_26)

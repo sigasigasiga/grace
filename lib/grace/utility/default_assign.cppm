@@ -7,7 +7,9 @@ module;
 
 export module grace.utility:default_assign;
 
-namespace default_assign {
+namespace grace::utility {
+
+namespace detail::default_assign {
 
 template<typename T>
 constexpr auto ufcs_swap(T &a, T &b, int)
@@ -50,9 +52,7 @@ constexpr MutTo &impl(MutTo &to, FwdFrom &&from)
     return to;
 }
 
-} // namespace default_assign
-
-export namespace grace::utility {
+} // namespace detail::default_assign
 
 // Generic way to implement assignment for any class that has
 // 1. `To(FwdFrom &&)` constructor
@@ -64,12 +64,15 @@ export namespace grace::utility {
 // ```
 // my_class &operator=(T &&rhs) { return default_assign(*this, std::forward<T>(rhs)); }
 // ```
-template<typename To, typename FwdFrom>
+//
+// Note that if ADL call to `swap` resolves to something other that `swap(To &, To&)`,
+// the behavior is undefined.
+export template<typename To, typename FwdFrom>
 constexpr auto default_assign(To &to, FwdFrom &&from)
-    noexcept(noexcept(default_assign::impl(to, std::forward<FwdFrom>(from))))
-    -> decltype(default_assign::impl(to, std::forward<FwdFrom>(from)))
+    noexcept(noexcept(detail::default_assign::impl(to, std::forward<FwdFrom>(from))))
+    -> decltype(detail::default_assign::impl(to, std::forward<FwdFrom>(from)))
 {
-    return default_assign::impl(to, std::forward<FwdFrom>(from));
+    return detail::default_assign::impl(to, std::forward<FwdFrom>(from));
 }
 
 } // namespace grace::utility

@@ -3,7 +3,7 @@ module;
 #include <functional>
 #include <utility>
 
-export module grace.fn.bind:compose;
+export module grace.fn.bind:pipe;
 
 import grace.fn.invoke;
 
@@ -21,7 +21,7 @@ struct fold_op
 export namespace grace::fn::bind {
 
 template<typename... Fs>
-[[nodiscard]] constexpr auto compose(Fs &&...fs)
+[[nodiscard]] constexpr auto pipe(Fs &&...fs)
     noexcept(noexcept(std::bind_front(fold_op{}, std::tuple{std::forward<Fs>(fs)...})))
     -> decltype(std::bind_front(fold_op{}, std::tuple{std::forward<Fs>(fs)...}))
 {

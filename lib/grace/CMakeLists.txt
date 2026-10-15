@@ -1,6 +1,4 @@
-add_subdirectory(algorithm)
 add_subdirectory(bit)
-add_subdirectory(compat)
 add_subdirectory(concepts)
 add_subdirectory(exception)
 add_subdirectory(fn)
@@ -31,9 +29,7 @@ target_link_libraries(
 
     PUBLIC
 
-    grace.algorithm
     grace.bit
-    grace.compat
     grace.concepts
     grace.exception
     grace.fn
