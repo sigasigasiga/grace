@@ -52,6 +52,39 @@ public:
     //    However, it's not consistent with STL -- `unique_ptr::release` works for both `&` and `&&`
     // 2. `T &&` is not returned, as the underlying value may be modified using the reference
     [[nodiscard]] constexpr T release() && noexcept { return std::move(*this).value(); }
+
+public:
+    template<typename U>
+    constexpr auto operator==(read_only_value<U> const &rhs) const
+        noexcept(noexcept(get() == rhs.get()))
+        -> decltype(get() == rhs.get())
+    {
+        return get() == rhs.get();
+    }
+
+    template<typename U>
+    constexpr auto operator==(U const &rhs) const
+        noexcept(noexcept(get() == rhs))
+        -> decltype(get() == rhs)
+    {
+        return get() == rhs;
+    }
+
+    template<typename U>
+    constexpr auto operator<=>(read_only_value<U> const &rhs) const
+        noexcept(noexcept(get() <=> rhs.get()))
+        -> decltype(get() <=> rhs.get())
+    {
+        return get() <=> rhs.get();
+    }
+
+    template<typename U>
+    constexpr auto operator<=>(U const &rhs) const
+        noexcept(noexcept(get() <=> rhs))
+        -> decltype(get() <=> rhs)
+    {
+        return get() <=> rhs;
+    }
 };
 
 template<typename T>
