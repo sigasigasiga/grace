@@ -61,7 +61,7 @@ int main()
 {
     // construction from an exception object is explicit
     static_assert(std::constructible_from<storage<std::exception>, std::runtime_error>);
-    static_assert(!std::is_convertible_v<std::runtime_error, storage<std::exception>>);
+    static_assert(std::is_convertible_v<std::runtime_error, storage<std::exception>>);
     static_assert(std::is_nothrow_constructible_v<storage<std::exception>, std::runtime_error>);
 
     // only exceptions convertible to `ExBase` by pointer are accepted
