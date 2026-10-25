@@ -7,91 +7,72 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 
+# Toolchain versions, referenced by the matrix below via YAML aliases
 env:
-  GCC_VERSION: 16
-  CLANG_VERSION: 23
+  GCC_VERSION: &gcc-version 16
+  CLANG_VERSION: &clang-version 23
 
 jobs:
-  gcc-libstdcxx:
-    name: gcc + libstdc++
+  build:
+    name: ${{ matrix.cc }}-${{ matrix.compiler_version }} + ${{ matrix.stdlib }}-${{ matrix.stdlib_version }}
     runs-on: ubuntu-26.04
     container:
       image: registry.opensuse.org/opensuse/tumbleweed:latest
 
-    steps:
-      - uses: actions/checkout@v4
+    strategy:
+      fail-fast: false
+      # `{0}` in `compiler_packages` is the `compiler_version`, in `stdlib_packages` it is the `stdlib_version`
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+            compiler_version: *gcc-version
+            compiler_packages: 'gcc{0} gcc{0}-c++'
 
-      - name: Install GCC ${{ env.GCC_VERSION }}
-        run: |
-          zypper --non-interactive refresh
-          # The image lags behind the rolling repos; sync it first so new packages don't conflict with stale base ones
-          zypper --non-interactive dup --no-recommends
-          zypper --non-interactive install --no-recommends gcc${{ env.GCC_VERSION }} gcc${{ env.GCC_VERSION }}-c++ cmake ninja
+            stdlib: libstdc++
+            stdlib_version: *gcc-version
+            stdlib_packages: 'libstdc++6-devel-gcc{0}'
 
-      - name: Configure
-        env:
-          CC: gcc-${{ env.GCC_VERSION }}
-          CXX: g++-${{ env.GCC_VERSION }}
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          - cc: clang
+            cxx: clang++
+            compiler_version: *clang-version
+            compiler_packages: 'clang{0}'
 
-      - name: Build
-        run: cmake --build build -j
+            stdlib: libstdc++
+            stdlib_version: *gcc-version
+            stdlib_packages: 'libstdc++6-devel-gcc{0}'
 
-      - name: Test
-        working-directory: build
-        run: ctest --output-on-failure
+          - cc: clang
+            cxx: clang++
+            compiler_version: *clang-version
+            compiler_packages: 'clang{0}'
 
-  clang-libstdcxx:
-    name: clang + libstdc++
-    runs-on: ubuntu-26.04
-    container:
-      image: registry.opensuse.org/opensuse/tumbleweed:latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Clang ${{ env.CLANG_VERSION }}
-        run: |
-          zypper --non-interactive refresh
-          # The image lags behind the rolling repos; sync it first so new packages don't conflict with stale base ones
-          zypper --non-interactive dup --no-recommends
-          zypper --non-interactive install --no-recommends clang${{ env.CLANG_VERSION }} libstdc++6-devel-gcc${{ env.GCC_VERSION }} cmake ninja
-
-      - name: Configure
-        env:
-          CC: clang-${{ env.CLANG_VERSION }}
-          CXX: clang++-${{ env.CLANG_VERSION }}
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build
-        run: cmake --build build -j
-
-      - name: Test
-        working-directory: build
-        run: ctest --output-on-failure
-
-  clang-libcxx:
-    name: clang + libc++
-    runs-on: ubuntu-26.04
-    container:
-      image: registry.opensuse.org/opensuse/tumbleweed:latest
+            stdlib: libc++
+            stdlib_version: *clang-version
+            # TODO: FIXME: set libc++ version explicitly when https://bugzilla.opensuse.org/show_bug.cgi?id=1287628
+            stdlib_packages: 'libc++-devel'
+            cxxflags: -stdlib=libc++
+            ldflags: -stdlib=libc++
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Clang ${{ env.CLANG_VERSION }} and libc++
+      - name: Install toolchain
         run: |
           zypper --non-interactive refresh
           # The image lags behind the rolling repos; sync it first so new packages don't conflict with stale base ones
           zypper --non-interactive dup --no-recommends
-          zypper --non-interactive install --no-recommends clang${{ env.CLANG_VERSION }} libc++-devel cmake ninja
+          zypper --non-interactive install --no-recommends \
+            ${{ format(matrix.compiler_packages, matrix.compiler_version) }} \
+            ${{ format(matrix.stdlib_packages, matrix.stdlib_version) }} \
+            cmake ninja
 
       - name: Configure
         env:
-          CC: clang-${{ env.CLANG_VERSION }}
-          CXX: clang++-${{ env.CLANG_VERSION }}
-          CXXFLAGS: -stdlib=libc++
-          LDFLAGS: -stdlib=libc++
+          CC: ${{ matrix.cc }}-${{ matrix.compiler_version }}
+          CXX: ${{ matrix.cxx }}-${{ matrix.compiler_version }}
+          CXXFLAGS: ${{ matrix.cxxflags }}
+          LDFLAGS: ${{ matrix.ldflags }}
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
