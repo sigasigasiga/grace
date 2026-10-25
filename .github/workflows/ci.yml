@@ -24,7 +24,9 @@ jobs:
       - name: Install GCC ${{ env.GCC_VERSION }}
         run: |
           zypper --non-interactive refresh
-          zypper --non-interactive install --allow-downgrade --no-recommends gcc${{ env.GCC_VERSION }} gcc${{ env.GCC_VERSION }}-c++ cmake ninja
+          # The image lags behind the rolling repos; sync it first so new packages don't conflict with stale base ones
+          zypper --non-interactive dup --no-recommends
+          zypper --non-interactive install --no-recommends gcc${{ env.GCC_VERSION }} gcc${{ env.GCC_VERSION }}-c++ cmake ninja
 
       - name: Configure
         env:
@@ -51,7 +53,9 @@ jobs:
       - name: Install Clang ${{ env.CLANG_VERSION }}
         run: |
           zypper --non-interactive refresh
-          zypper --non-interactive install --allow-downgrade --no-recommends clang${{ env.CLANG_VERSION }} libstdc++6-devel-gcc${{ env.GCC_VERSION }} cmake ninja
+          # The image lags behind the rolling repos; sync it first so new packages don't conflict with stale base ones
+          zypper --non-interactive dup --no-recommends
+          zypper --non-interactive install --no-recommends clang${{ env.CLANG_VERSION }} libstdc++6-devel-gcc${{ env.GCC_VERSION }} cmake ninja
 
       - name: Configure
         env:
@@ -78,7 +82,9 @@ jobs:
       - name: Install Clang ${{ env.CLANG_VERSION }} and libc++
         run: |
           zypper --non-interactive refresh
-          zypper --non-interactive install --allow-downgrade --no-recommends clang${{ env.CLANG_VERSION }} libc++-devel cmake ninja
+          # The image lags behind the rolling repos; sync it first so new packages don't conflict with stale base ones
+          zypper --non-interactive dup --no-recommends
+          zypper --non-interactive install --no-recommends clang${{ env.CLANG_VERSION }} libc++-devel cmake ninja
 
       - name: Configure
         env:
