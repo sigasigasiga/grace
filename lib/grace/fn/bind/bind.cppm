@@ -134,7 +134,7 @@ constexpr auto invoke_helper(
     );
 }
 
-template<typename F, typename BoundTuple>
+template<std::size_t ArgCount, typename F, typename BoundTuple>
 class binder
 {
 public:
@@ -159,8 +159,7 @@ public:
     template<
         typename Self,
         typename ...Args,
-        typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, binder>,
-        std::size_t ArgCount = bind_expression_argument_count<binder>::value
+        typename FwdSelf = grace::type_traits::copy_cvref_t<Self &&, binder>
     >
     requires (sizeof...(Args) == ArgCount)
     constexpr auto operator()(this Self &&self, Args &&...args)
@@ -190,8 +189,19 @@ private:
     BoundTuple m_bound;
 };
 
-template<typename F, typename BoundTuple>
-binder(F, BoundTuple) -> binder<F, BoundTuple>;
+template<
+    std::size_t ArgCount,
+    typename FwdF,
+    typename FwdBoundTuple,
+    typename F = std::decay_t<FwdF>, // must `decay` because of the function references
+    typename BoundTuple = std::remove_cvref_t<FwdBoundTuple>
+>
+constexpr auto make_binder(FwdF &&fn, FwdBoundTuple &&tup)
+    noexcept(noexcept(binder<ArgCount, F, BoundTuple>(std::forward<FwdF>(fn), std::forward<FwdBoundTuple>(tup))))
+    -> decltype(binder<ArgCount, F, BoundTuple>(std::forward<FwdF>(fn), std::forward<FwdBoundTuple>(tup)))
+{
+    return binder<ArgCount, F, BoundTuple>(std::forward<FwdF>(fn), std::forward<FwdBoundTuple>(tup));
+}
 
 template<
     typename BoundArg,
@@ -210,38 +220,55 @@ constexpr std::size_t count_arg(p<0>) {
     return static_cast<std::size_t>(Placeholder);
 }
 
-template<typename ...BoundArgs>
+template<typename ...FwdBoundArgs>
 constexpr auto count_args() {
-    return std::ranges::max({0uz, (count_arg<BoundArgs>(p<1>{}))...});
+    return std::ranges::max({0uz, (count_arg<std::remove_cvref_t<FwdBoundArgs>>(p<1>{}))...});
 }
 
-template<typename F, typename ...BoundArgs>
-struct bind_expression_argument_count<binder<F, std::tuple<BoundArgs...>>> : size_constant<count_args<BoundArgs...>()>
+template<std::size_t ArgCount, typename ...Rest>
+struct bind_expression_argument_count<binder<ArgCount, Rest...>> : size_constant<ArgCount>
 {};
 
 // Like `std::bind` but:
 // 1. Supports forwarding (i.e. `std::move(bind_result)()` is different from `bind_result()`)
-// 2. Supports NTTP-stored callable (i.e. `bind<some_function>()`)
-// 3. Cannot be invoked with more arguments than needed (i.e. `bind(f, _1)(1, 2)` is an error)
-// 4. Supports `std::placeholders`
-// 5. Does not define and does not use `std::is_bind_expression`.
+// 2. Must be invoked with exactly `ArgCount` arguments (i.e. `bind<2>(f, _1)(1)` and `bind<2>(f, _1)(1, 2, 3)` are errors).
+//    The explicit count must be at least what the placeholders and nested bind expressions need
+// 3. Supports `std::placeholders`
+// 4. Does not define and does not use `std::is_bind_expression`.
 //    It uses `bind_expression_argument_count` instead
-export template<typename F, typename ...Args>
-constexpr auto bind(F &&fn, Args &&...args)
-    noexcept(noexcept(binder(
+export template<
+    std::size_t ArgCount,
+    typename F,
+    typename ...Args
+>
+requires (ArgCount >= (count_args<Args...>()))
+[[nodiscard]] constexpr auto bind(F &&fn, Args &&...args)
+    noexcept(noexcept((make_binder<ArgCount>)(
         std::forward<F>(fn),
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     )))
-    -> decltype(binder(
+    -> decltype((make_binder<ArgCount>)(
         std::forward<F>(fn),
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     ))
 {
     // `make_tuple` is not SFINAE-friendly. duh
-    return binder(
+    return (make_binder<ArgCount>)(
         std::forward<F>(fn),
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     );
-};
+}
+
+export template<
+    typename F,
+    typename ...Args,
+    std::size_t ArgCount = (count_args<Args ...>)()
+>
+[[nodiscard]] constexpr auto bind(F &&fn, Args &&...args)
+    noexcept(noexcept((bind<ArgCount>)(std::forward<F>(fn), std::forward<Args>(args)...)))
+    -> decltype((bind<ArgCount>)(std::forward<F>(fn), std::forward<Args>(args)...))
+{
+    return (bind<ArgCount>)(std::forward<F>(fn), std::forward<Args>(args)...);
+}
 
 } // namespace grace::fn::bind
