@@ -61,6 +61,11 @@ constexpr std::false_type test_invocability(F &&f, Args &&...args) { return {}; 
 template<typename T>
 concept is_bindable = requires (T &&t) { grace::fn::bind::bind(std::forward<T>(t)); };
 
+template<std::size_t ArgCount, typename ...Args>
+concept is_bindable_with_count = requires (Args &&...args) {
+    grace::fn::bind::bind<ArgCount>(std::forward<Args>(args)...);
+};
+
 consteval void test() {
     namespace f = grace::fn::bind;
 
@@ -116,18 +121,6 @@ consteval void test() {
         }
         if (std::move(std::as_const(b))() != 4) {
             throw "binder const rvalue forwarding failed";
-        }
-    }
-
-    // NTTP-stored callables
-    {
-        if (f::bind<double_it>(_1)(21) != 42) {
-            throw "NTTP-stored callable failed";
-        }
-
-        // fully bound, no placeholders
-        if (f::bind<double_it>(5)() != 10) {
-            throw "NTTP-stored callable with bound argument failed";
         }
     }
 
@@ -204,8 +197,128 @@ consteval void test() {
         }
     }
 
+    // explicit argument count
+    {
+        // more arguments than the placeholders need; extra ones are ignored
+        {
+            auto b = f::bind<3>(double_it, _2);
+
+            if (b(0, 21, 0) != 42) {
+                throw "explicit argument count: unused arguments should be ignored";
+            }
+
+            if (test_invocability(b, 0, 21)) {
+                throw "explicit argument count: too few arguments should not be accepted";
+            }
+
+            if (test_invocability(b, 0, 21, 0, 0)) {
+                throw "explicit argument count: too many arguments should not be accepted";
+            }
+        }
+
+        // no placeholders at all
+        {
+            auto b = f::bind<2>(double_it, 5);
+
+            if (b(1, 2) != 10) {
+                throw "explicit argument count without placeholders failed";
+            }
+
+            if (test_invocability(b)) {
+                throw "explicit argument count without placeholders should not be invocable with no arguments";
+            }
+        }
+
+        // zero count is the same as the deduced one for fully bound expressions
+        {
+            auto b = f::bind<0>(double_it, 5);
+
+            if (b() != 10) {
+                throw "explicit zero argument count failed";
+            }
+
+            if (test_invocability(b, 1)) {
+                throw "explicit zero argument count should not accept arguments";
+            }
+        }
+
+        // explicit count matching the deduced one
+        {
+            auto b = f::bind<1>(double_it, _1);
+
+            if (b(21) != 42) {
+                throw "explicit argument count equal to the deduced one failed";
+            }
+
+            if (test_invocability(b, 1, 2)) {
+                throw "explicit argument count equal to the deduced one should not accept extra arguments";
+            }
+        }
+
+        // nested bind expressions report the explicit count to the outer bind
+        {
+            auto inner = f::bind<2>(double_it, _1);
+            auto b = f::bind(std::plus{}, inner, _2);
+
+            if (b(1, 2) != 4) {
+                throw "nested bind expression with explicit argument count failed";
+            }
+
+            if (test_invocability(b, 1)) {
+                throw "nested bind expression with explicit argument count should require its arguments";
+            }
+
+            if (test_invocability(b, 1, 2, 3)) {
+                throw "nested bind expression with explicit argument count should not accept extra arguments";
+            }
+
+            static_assert(grace::fn::bind::bind_expression_argument_count<decltype(inner)>::value == 2);
+        }
+
+        // explicit count less than the placeholders or nested bind expressions need
+        {
+            using fn_ref = decltype((double_it));
+            using inner = decltype(f::bind<2>(double_it, _1));
+
+            static_assert(!is_bindable_with_count<1, fn_ref, decltype((_2))>);
+            static_assert(is_bindable_with_count<2, fn_ref, decltype((_2))>);
+
+            static_assert(!is_bindable_with_count<1, fn_ref, inner>);
+            static_assert(is_bindable_with_count<2, fn_ref, inner>);
+        }
+
+        // forwarding still works with the explicit count
+        {
+            auto b = f::bind<2>(classify{}, _2);
+
+            int x = 0;
+            int const cx = 0;
+
+            if (b(0, x) != 1) {
+                throw "explicit argument count: lvalue argument forwarding failed";
+            }
+            if (b(0, std::move(x)) != 2) {
+                throw "explicit argument count: rvalue argument forwarding failed";
+            }
+            if (b(0, cx) != 3) {
+                throw "explicit argument count: const lvalue argument forwarding failed";
+            }
+        }
+    }
+
     // `noexcept` propagation
     {
+        // explicit argument count
+        {
+            auto b = f::bind<2>(double_it_noexcept, _1);
+            static_assert(noexcept(b(1, 2)));
+
+            auto tb = f::bind<2>(double_it, _1);
+            static_assert(!noexcept(tb(1, 2)));
+
+            static_assert(noexcept(f::bind<2>(double_it_noexcept, _1)));
+        }
+
         // invocation
         {
             auto b = f::bind(double_it_noexcept, _1);
@@ -215,15 +328,6 @@ consteval void test() {
             auto tb = f::bind(double_it, _1);
             static_assert(!noexcept(tb(1)));
             static_assert(!noexcept(std::move(tb)(1)));
-        }
-
-        // NTTP-stored callables
-        {
-            auto b = f::bind<double_it_noexcept>(_1);
-            static_assert(noexcept(b(1)));
-
-            auto tb = f::bind<double_it>(_1);
-            static_assert(!noexcept(tb(1)));
         }
 
         // nested bind expressions
