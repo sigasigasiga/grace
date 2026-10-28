@@ -119,18 +119,6 @@ consteval void test() {
         }
     }
 
-    // NTTP-stored callables
-    {
-        if (f::bind<double_it>(_1)(21) != 42) {
-            throw "NTTP-stored callable failed";
-        }
-
-        // fully bound, no placeholders
-        if (f::bind<double_it>(5)() != 10) {
-            throw "NTTP-stored callable with bound argument failed";
-        }
-    }
-
     // nested bind expression support
     {
         {
@@ -215,15 +203,6 @@ consteval void test() {
             auto tb = f::bind(double_it, _1);
             static_assert(!noexcept(tb(1)));
             static_assert(!noexcept(std::move(tb)(1)));
-        }
-
-        // NTTP-stored callables
-        {
-            auto b = f::bind<double_it_noexcept>(_1);
-            static_assert(noexcept(b(1)));
-
-            auto tb = f::bind<double_it>(_1);
-            static_assert(!noexcept(tb(1)));
         }
 
         // nested bind expressions

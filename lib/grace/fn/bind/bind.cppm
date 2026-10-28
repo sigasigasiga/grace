@@ -6,8 +6,6 @@ module;
 
 export module grace.fn.bind:bind;
 
-import :lift_invocable;
-
 import grace.meta;
 import grace.type_traits;
 import grace.utility;
@@ -245,13 +243,5 @@ constexpr auto bind(F &&fn, Args &&...args)
         std::tuple<std::unwrap_ref_decay_t<Args>...>(std::forward<Args>(args)...)
     );
 };
-
-export template<auto F, typename ...Args>
-constexpr auto bind(Args &&...args)
-    noexcept(noexcept((bind)(lift_invocable<F>{}, std::forward<Args>(args)...)))
-    -> decltype((bind)(lift_invocable<F>{}, std::forward<Args>(args)...))
-{
-    return (bind)(lift_invocable<F>{}, std::forward<Args>(args)...);
-}
 
 } // namespace grace::fn::bind
