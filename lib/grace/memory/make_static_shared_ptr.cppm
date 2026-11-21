@@ -1,9 +1,6 @@
-module;
-
-#include <concepts>
-#include <memory>
-
 export module grace.memory:make_static_shared_ptr;
+
+import std;
 
 export namespace grace::memory {
 

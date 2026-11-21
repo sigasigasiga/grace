@@ -1,9 +1,6 @@
-module;
-
-#include <memory>
-#include <utility>
-
 export module grace.memory:prepend_deleter;
+
+import std;
 
 import :get_deleter;
 import :to_unique_ptr;

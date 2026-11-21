@@ -1,6 +1,4 @@
-#include <concepts>
-#include <cstddef>
-#include <utility>
+import std;
 
 import grace.utility;
 

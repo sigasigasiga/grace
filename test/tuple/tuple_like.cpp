@@ -1,6 +1,4 @@
-#include <ranges>
-#include <string>
-#include <tuple>
+import std;
 
 import grace.tuple;
 

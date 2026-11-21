@@ -1,8 +1,6 @@
-module;
-
-#include <memory>
-
 export module grace.memory:get_deleter;
+
+import std;
 
 import grace.type_traits;
 

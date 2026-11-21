@@ -1,10 +1,6 @@
-#include <concepts>
-#include <exception>
-#include <stdexcept>
-#include <string>
-#include <type_traits>
-#include <utility>
 #include <version>
+
+import std;
 
 import grace.exception;
 

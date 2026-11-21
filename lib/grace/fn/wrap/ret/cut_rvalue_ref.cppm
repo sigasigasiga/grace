@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.wrap.ret:cut_rvalue_ref;
+
+import std;
 
 import grace.fn.bind;
 import grace.fn.op;

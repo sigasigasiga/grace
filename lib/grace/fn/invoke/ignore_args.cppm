@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.fn.invoke:ignore_args;
+
+import std;
 
 export namespace grace::fn::invoke {
 

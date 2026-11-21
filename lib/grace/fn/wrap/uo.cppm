@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.wrap:uo;
+
+import std;
 
 import grace.fn.wrap.args;
 import grace.fn.wrap.ret;

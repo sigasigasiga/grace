@@ -1,8 +1,6 @@
-module;
-
-#include <concepts>
-
 export module grace.concepts:without_cvref;
+
+import std;
 
 export namespace grace::concepts {
 

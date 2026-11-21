@@ -1,8 +1,6 @@
-module;
-
-#include <type_traits>
-
 export module grace.type_traits:copy_cvref;
+
+import std;
 
 export namespace grace::type_traits {
 

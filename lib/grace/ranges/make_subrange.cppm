@@ -1,8 +1,6 @@
-module;
-
-#include <ranges>
-
 export module grace.ranges:make_subrange;
+
+import std;
 
 import grace.tuple;
 

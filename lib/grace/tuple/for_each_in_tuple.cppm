@@ -1,8 +1,6 @@
-module;
-
-#include <functional>
-
 export module grace.tuple:for_each_in_tuple;
+
+import std;
 
 import :index_sequence_for_tuple;
 

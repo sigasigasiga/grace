@@ -1,8 +1,6 @@
-module;
-
-#include <tuple>
-
 export module grace.tuple:make_tuple;
+
+import std;
 
 export namespace grace::tuple {
 

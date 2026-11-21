@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.wrap.ret:objectify;
+
+import std;
 
 import grace.fn.bind;
 import grace.fn.op;

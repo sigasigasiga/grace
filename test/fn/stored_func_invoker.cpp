@@ -1,7 +1,4 @@
-#include <concepts>
-#include <cstdlib>
-#include <functional>
-#include <utility>
+import std;
 
 import grace.fn.bind;
 import grace.utility;
@@ -78,8 +75,8 @@ int main()
 {
     test_storage_assignment();
     if (test_cvref()) {
-        return EXIT_SUCCESS;
+        return 0;
     } else {
-        return EXIT_FAILURE;
+        return 1;
     }
 }

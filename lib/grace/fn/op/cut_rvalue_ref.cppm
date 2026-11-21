@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.op:cut_rvalue_ref;
+
+import std;
 
 import grace.utility;
 

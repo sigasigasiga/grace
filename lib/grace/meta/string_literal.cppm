@@ -1,10 +1,6 @@
-module;
-
-#include <algorithm>
-#include <stdexcept>
-#include <string_view>
-
 export module grace.meta:string_literal;
+
+import std;
 
 export namespace grace::meta {
 

@@ -1,10 +1,6 @@
-module;
-
-#include <functional>
-#include <type_traits>
-#include <utility>
-
 export module grace.bit:flag_set;
+
+import std;
 
 export namespace grace::bit {
 

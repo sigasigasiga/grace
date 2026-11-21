@@ -1,8 +1,6 @@
-module;
-
-#include <memory>
-
 export module grace.memory:shared_from_this_base;
+
+import std;
 
 export namespace grace::memory {
 

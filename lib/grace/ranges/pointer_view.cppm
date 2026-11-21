@@ -1,9 +1,6 @@
-module;
-
-#include <memory>
-#include <ranges>
-
 export module grace.ranges:pointer_view;
+
+import std;
 
 import grace.memory;
 

@@ -1,11 +1,10 @@
 module;
 
-#include <concepts>
-#include <exception>
-#include <type_traits>
 #include <version>
 
 export module grace.exception:storage;
+
+import std;
 
 export namespace grace::exception {
 

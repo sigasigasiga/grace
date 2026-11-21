@@ -1,8 +1,6 @@
-module;
-
-#include <memory>
-
 export module grace.memory:to_address;
+
+import std;
 
 import grace.meta;
 

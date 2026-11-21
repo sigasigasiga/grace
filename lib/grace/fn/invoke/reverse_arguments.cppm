@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.fn.invoke:reverse_arguments;
+
+import std;
 
 namespace grace::fn::invoke {
 

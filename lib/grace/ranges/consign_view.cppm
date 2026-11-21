@@ -1,9 +1,6 @@
-module;
-
-#include <ranges>
-#include <version>
-
 export module grace.ranges:consign_view;
+
+import std;
 
 import grace.type_traits;
 import grace.utility;

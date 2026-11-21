@@ -1,8 +1,6 @@
-module;
-
-#include <iostream>
-
 export module grace.toy:printing_constructor;
+
+import std;
 
 export namespace grace::toy {
 

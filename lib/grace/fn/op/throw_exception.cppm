@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.op:throw_exception;
+
+import std;
 
 export namespace grace::fn::op {
 

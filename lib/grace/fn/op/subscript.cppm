@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.op:subscript;
+
+import std;
 
 export namespace grace::fn::op {
 

@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.bind:lift_function;
+
+import std;
 
 export namespace grace::fn::bind {
 

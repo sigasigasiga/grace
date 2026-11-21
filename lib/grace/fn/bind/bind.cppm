@@ -1,10 +1,6 @@
-module;
-
-#include <algorithm>
-#include <functional>
-#include <tuple>
-
 export module grace.fn.bind:bind;
+
+import std;
 
 import :lift_invocable;
 

@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.fn.bind:bind_expression;
+
+import std;
 
 import :stored_func_invoker;
 

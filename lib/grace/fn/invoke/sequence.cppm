@@ -1,8 +1,6 @@
-module;
-
-#include <functional>
-
 export module grace.fn.invoke:sequence;
+
+import std;
 
 import grace.tuple;
 

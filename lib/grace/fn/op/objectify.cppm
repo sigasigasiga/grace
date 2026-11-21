@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.op:objectify;
+
+import std;
 
 import grace.utility;
 

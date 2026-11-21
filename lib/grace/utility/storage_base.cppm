@@ -1,10 +1,6 @@
-module;
-
-#include <concepts>
-#include <type_traits>
-#include <utility>
-
 export module grace.utility:storage_base;
+
+import std;
 
 import :private_base_cast;
 import grace.type_traits;

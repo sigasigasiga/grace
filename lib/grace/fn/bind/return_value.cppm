@@ -1,8 +1,6 @@
-module;
-
-#include <functional>
-
 export module grace.fn.bind:return_value;
+
+import std;
 
 export namespace grace::fn::bind {
 

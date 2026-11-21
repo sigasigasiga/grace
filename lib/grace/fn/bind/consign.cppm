@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <type_traits>
-
 export module grace.fn.bind:consign;
+
+import std;
 
 import grace.type_traits;
 import grace.utility;

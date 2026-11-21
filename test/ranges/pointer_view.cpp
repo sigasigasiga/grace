@@ -1,7 +1,4 @@
-#include <algorithm>
-#include <memory>
-#include <numeric>
-#include <ranges>
+import std;
 
 import grace.ranges;
 
