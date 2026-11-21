@@ -1,8 +1,6 @@
-module;
-
-#include <ranges>
-
 export module grace.ranges:get_lowest_base;
+
+import std;
 
 import grace.meta;
 import grace.utility;

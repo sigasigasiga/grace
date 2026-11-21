@@ -1,9 +1,6 @@
-module;
-
-#include <concepts>
-#include <tuple>
-
 export module grace.tuple:tuple_like;
+
+import std;
 
 import grace.type_traits;
 import :index_sequence_for_tuple;

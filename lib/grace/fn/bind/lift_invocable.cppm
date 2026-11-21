@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.fn.bind:lift_invocable;
+
+import std;
 
 export namespace grace::fn::bind {
 

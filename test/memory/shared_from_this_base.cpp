@@ -1,5 +1,4 @@
-#include <concepts>
-#include <memory>
+import std;
 
 import grace.memory;
 

@@ -1,10 +1,6 @@
-module;
-
-#include <concepts>
-#include <type_traits>
-#include <utility>
-
 export module grace.fn.op:construct;
+
+import std;
 
 export namespace grace::fn::op {
 

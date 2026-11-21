@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.utility:get_reference;
+
+import std;
 
 export namespace grace::utility {
 

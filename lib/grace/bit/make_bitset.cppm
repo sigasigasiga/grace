@@ -1,9 +1,6 @@
-module;
-
-#include <array>
-#include <bitset>
-
 export module grace.bit:make_bitset;
+
+import std;
 
 export namespace grace::bit {
 

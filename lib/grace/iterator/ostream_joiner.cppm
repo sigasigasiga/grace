@@ -1,13 +1,6 @@
-module;
-
-#include <concepts>
-#include <iterator>
-#include <memory>
-#include <ostream>
-#include <string>
-#include <utility>
-
 export module grace.iterator:ostream_joiner;
+
+import std;
 
 export namespace grace::iterator {
 

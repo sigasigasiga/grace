@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <tuple>
-
 export module grace.fn.wrap.args:apply;
+
+import std;
 
 struct apply_op
 {

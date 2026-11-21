@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.utility:objectify;
+
+import std;
 
 import :decay_copy;
 

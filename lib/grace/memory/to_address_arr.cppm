@@ -1,9 +1,6 @@
-module;
-
-#include <concepts>
-#include <memory>
-
 export module grace.memory:to_address_arr;
+
+import std;
 
 import :to_address;
 

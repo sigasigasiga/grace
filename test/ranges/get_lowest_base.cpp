@@ -1,9 +1,4 @@
-#include <concepts>
-#include <ranges>
-#include <span>
-#include <type_traits>
-#include <utility>
-#include <vector>
+import std;
 
 import grace.ranges;
 

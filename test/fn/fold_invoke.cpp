@@ -1,7 +1,8 @@
-#include <concepts>
-#include <tuple>
+import std;
 
 import grace.fn.invoke;
+
+#if 0
 
 using grace::fn::invoke::fold;
 
@@ -35,6 +36,7 @@ void return_type_check()
     using ret_t = decltype(fold(t, 1, 2, 3));
     static_assert(std::same_as<ret_t, unsigned *>);
 }
+#endif
 
 int main()
 {

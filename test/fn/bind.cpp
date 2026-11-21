@@ -1,5 +1,4 @@
-#include <functional>
-#include <utility>
+import std;
 
 import grace.fn.bind;
 

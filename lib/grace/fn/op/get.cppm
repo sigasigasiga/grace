@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.op:get;
+
+import std;
 
 import grace.tuple;
 

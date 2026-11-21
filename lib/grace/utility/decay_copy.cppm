@@ -1,9 +1,6 @@
-module;
-
-#include <type_traits>
-#include <utility>
-
 export module grace.utility:decay_copy;
+
+import std;
 
 export namespace grace::utility {
 

@@ -1,7 +1,4 @@
-#include <concepts>
-#include <cstdint>
-#include <functional>
-#include <type_traits>
+import std;
 
 import grace.bit;
 

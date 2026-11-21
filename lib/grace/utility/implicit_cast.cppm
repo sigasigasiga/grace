@@ -1,8 +1,6 @@
-module;
-
-#include <type_traits>
-
 export module grace.utility:implicit_cast;
+
+import std;
 
 export namespace grace::utility {
 

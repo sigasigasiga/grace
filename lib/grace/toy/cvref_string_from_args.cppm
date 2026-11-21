@@ -1,8 +1,6 @@
-module;
-
-#include <string_view>
-
 export module grace.toy:cvref_string_from_args;
+
+import std;
 
 export namespace grace::toy {
 

@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.op:decay_copy;
+
+import std;
 
 import grace.utility;
 

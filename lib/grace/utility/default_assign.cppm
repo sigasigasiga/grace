@@ -1,11 +1,6 @@
-module;
-
-#include <concepts>
-#include <memory>
-#include <type_traits>
-#include <utility>
-
 export module grace.utility:default_assign;
+
+import std;
 
 namespace grace::utility {
 

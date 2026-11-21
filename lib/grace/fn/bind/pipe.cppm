@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.fn.bind:pipe;
+
+import std;
 
 import grace.fn.invoke;
 

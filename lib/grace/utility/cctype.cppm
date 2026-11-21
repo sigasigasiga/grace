@@ -1,8 +1,6 @@
-module;
-
-#include <cctype>
-
 export module grace.utility:cctype;
+
+import std;
 
 export namespace grace::utility {
 

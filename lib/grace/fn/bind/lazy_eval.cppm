@@ -1,8 +1,6 @@
-module;
-
-#include <functional>
-
 export module grace.fn.bind:lazy_eval;
+
+import std;
 
 import grace.type_traits;
 import grace.utility;

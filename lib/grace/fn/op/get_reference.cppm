@@ -1,8 +1,6 @@
-module;
-
-#include <utility>
-
 export module grace.fn.op:get_reference;
+
+import std;
 
 import grace.utility;
 

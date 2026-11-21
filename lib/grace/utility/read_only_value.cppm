@@ -1,10 +1,6 @@
-module;
-
-#include <functional>
-#include <type_traits>
-#include <utility>
-
 export module grace.utility:read_only_value;
+
+import std;
 
 import :storage_base;
 import :private_base_cast;

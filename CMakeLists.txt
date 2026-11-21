@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 4.5.0) # `import std`
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -12,6 +12,8 @@ project(
 if (PROJECT_IS_TOP_LEVEL AND NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     file(WRITE "${CMAKE_BINARY_DIR}/.gitignore" "*\n")
 endif()
+
+set(CMAKE_CXX_MODULE_STD ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

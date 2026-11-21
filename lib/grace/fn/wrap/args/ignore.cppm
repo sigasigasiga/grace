@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.fn.wrap.args:ignore;
+
+import std;
 
 import grace.fn.invoke;
 

@@ -1,9 +1,6 @@
-module;
-
-#include <functional>
-#include <utility>
-
 export module grace.fn.invoke:fold;
+
+import std;
 
 import grace.tuple;
 

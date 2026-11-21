@@ -1,8 +1,6 @@
-module;
-
-#include <cstdint>
-
 export module grace.meta:overload_priority;
+
+import std;
 
 export namespace grace::meta {
 

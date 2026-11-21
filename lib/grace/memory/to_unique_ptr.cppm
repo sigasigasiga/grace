@@ -1,10 +1,6 @@
-module;
-
-#include <memory>
-#include <type_traits>
-#include <utility>
-
 export module grace.memory:to_unique_ptr;
+
+import std;
 
 export namespace grace::memory {
 

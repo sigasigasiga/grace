@@ -1,8 +1,6 @@
-module;
-
-#include <cstdlib>
-
 export module grace.fn.op:free;
+
+import std;
 
 export namespace grace::fn::op {
 
